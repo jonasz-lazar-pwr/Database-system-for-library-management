@@ -1,17 +1,36 @@
-// Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
-// then press Enter. You can now see whitespace characters in your code.
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
 public class Main {
     public static void main(String[] args) {
-        // Press Alt+Enter with your caret at the highlighted text to see how
-        // IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+        String jdbcUrl = "jdbc:mysql://localhost/testDB";
+        String username = "root";
+        String password = "root!!!!";
 
-        // Press Shift+F10 or click the green arrow button in the gutter to run the code.
-        for (int i = 1; i <= 19; i++) {
+        try {
+            Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
+            Statement statement = connection.createStatement();
+            String query = "SELECT * FROM Osoby";
 
-            // Press Shift+F9 to start debugging your code. We have set one breakpoint
-            // for you, but you can always add more by pressing Ctrl+F8.
-            System.out.println("i = " + i);
+            ResultSet resultSet = statement.executeQuery(query);
+
+            while (resultSet.next()) {
+                int id = resultSet.getInt("ID");
+                String name = resultSet.getString("Imię");
+                String surname = resultSet.getString("Nazwisko");
+                int age = resultSet.getInt("Wiek");
+                String nationality = resultSet.getString("Narodowość");
+
+                System.out.println("ID: " + id + ", Imię: " + name + ", Nazwisko: " + surname + ", Wiek: " + age + ", Narodowość: " + nationality);
+            }
+
+            resultSet.close();
+            statement.close();
+            connection.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
