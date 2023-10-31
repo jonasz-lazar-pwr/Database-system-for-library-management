@@ -5,14 +5,15 @@ import java.sql.Statement;
 
 public class Main {
     public static void main(String[] args) {
-        String jdbcUrl = "jdbc:mysql://localhost/testDB";
+
+        String jdbcUrl = "jdbc:mysql://localhost/libraryDB";
         String username = "root";
-        String password = "root!!!!";
+        String password = "root";
 
         try {
             Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
             Statement statement = connection.createStatement();
-
+/*
             // WYBIERZ WSZYSTKIE REKORDY I JE WYŚWIETL
             System.out.println("1.");
             String query = "SELECT * FROM Osoby";
@@ -48,7 +49,7 @@ public class Main {
             }
 
             resultSet.close();
-            resultSet2.close();
+            resultSet2.close();*/
             statement.close();
             connection.close();
         } catch (Exception e) {
