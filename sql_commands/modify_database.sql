@@ -9,12 +9,12 @@ DROP TABLE IF EXISTS Users;
 -- Delete database "libraryDB"
 DROP DATABASE libraryDB;
 
--- Auto-increment reset
-ALTER TABLE Users AUTO_INCREMENT = 1;
-ALTER TABLE Authors AUTO_INCREMENT = 1;
-ALTER TABLE Books AUTO_INCREMENT = 1;
-ALTER TABLE Reservations AUTO_INCREMENT = 1;
-ALTER TABLE Reports AUTO_INCREMENT = 1;
+---- Auto-increment reset
+--ALTER TABLE Users AUTO_INCREMENT = 1;
+--ALTER TABLE Authors AUTO_INCREMENT = 1;
+--ALTER TABLE Books AUTO_INCREMENT = 1;
+--ALTER TABLE Reservations AUTO_INCREMENT = 1;
+--ALTER TABLE Reports AUTO_INCREMENT = 1;
 
 -- Create database "libraryDB"
 CREATE DATABASE libraryDB;
@@ -33,25 +33,15 @@ CREATE TABLE Users (
     Role ENUM('czytelnik', 'bibliotekarz')
 );
 
--- Create table "Authors"
-CREATE TABLE Authors (
-    AuthorID INT AUTO_INCREMENT PRIMARY KEY,
-    FirstName VARCHAR(50),
-    LastName VARCHAR(50),
-    BirthDate DATE,
-    Nationality VARCHAR(50)
-);
-
 -- Create table "Books"
 CREATE TABLE Books (
     BookID INT AUTO_INCREMENT PRIMARY KEY,
     Title VARCHAR(100),
-    AuthorID INT,
+    AuthorFullName VARCHAR(100), -- Zamiast AuthorID
     Publisher VARCHAR(50),
     PublicationYear INT,
     ISBN VARCHAR(13) UNIQUE,
-    Availability ENUM('dostępna', 'wypożyczona', 'zarezerwowana'),
-    FOREIGN KEY (AuthorID) REFERENCES Authors(AuthorID)
+    Availability ENUM('dostępna', 'wypożyczona', 'zarezerwowana')
 );
 
 -- Create table "Loans"

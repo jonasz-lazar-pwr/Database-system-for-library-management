@@ -23,34 +23,22 @@ VALUES
     ('Bartosz', 'Bibliotekarski', 'ul. Książkowa 2, Kraków', '+48 222 333 444', 'B67891', 'bibliotekarz'),
     ('Cezary', 'Bibliotekarski', 'ul. Wypożyczalna 3, Gdańsk', '+48 333 444 555', 'C13579', 'bibliotekarz');
 
--- Insert sample authors into the "Authors" table
-INSERT INTO Authors (FirstName, LastName, BirthDate, Nationality)
-VALUES
-    ('J.R.R.', 'Tolkien', '1892-01-03', 'brytyjska'),
-    ('J.K.', 'Rowling', '1965-07-31', 'brytyjska'),
-    ('Fiodor', 'Dostojewski', '1821-11-11', 'rosyjska'),
-    ('Andrzej', 'Sapkowski', '1948-06-21', 'polska'),
-    ('Stephen', 'King', '1947-09-21', 'amerykańska'),
-    ('Michaił', 'Bułhakow', '1891-05-15', 'rosyjska'),
-    ('Lucy Maud', 'Montgomery', '1874-11-30', 'kanadyjska'),
-    ('Jane', 'Austen', '1775-12-16', 'brytyjska'),
-    ('Bram', 'Stoker', '1847-11-08', 'irlandzka'),
-    ('George', 'Orwell', '1903-06-25', 'brytyjska');
 
 -- Insert sample books into the "Books" table
-INSERT INTO Books (Title, AuthorID, Publisher, PublicationYear, ISBN, Availability)
+INSERT INTO Books (Title, AuthorFullName, Publisher, PublicationYear, ISBN, Availability)
 VALUES
-    ('Władca Pierścieni: Drużyna Pierścienia', 1, 'Wydawnictwo Literackie', 2001, '9788373191723', 'dostępna'),
-    ('Harry Potter i Kamień Filozoficzny', 2, 'Media Rodzina', 1999, '9788372780331', 'dostępna'),
-    ('Zbrodnia i Kara', 3, 'Czytelnik', 2010, '9788307026319', 'dostępna'),
-    ('Wiedźmin: Ostatnie Życzenie', 4, 'SuperNOWA', 2008, '9788375542019', 'dostępna'),
-    ('To', 5, 'Albatros', 2018, '9788328014584', 'dostępna'),
-    ('Hobbit, czyli Tam i Z Powrotem', 1, 'Wydawnictwo Literackie', 2003, '9788373191044', 'dostępna'),
-    ('Mistrz i Małgorzata', 6, 'Iskry', 2001, '9788320710048', 'dostępna'),
-    ('Ania z Zielonego Wzgórza', 7, 'Wydawnictwo Ameet', 2018, '9788381517854', 'dostępna'),
-    ('Duma i Uprzedzenie', 8, 'Zielona Sowa', 2013, '9788362447170', 'dostępna'),
-    ('Dracula', 9, 'Prószyński i S-ka', 2003, '9788373270801', 'dostępna'),
-    ('1984', 10, 'Dom Wydawniczy REBIS', 2018, '9788389141418', 'dostępna');
+    ('Władca Pierścieni: Drużyna Pierścienia', 'J.R.R. Tolkien', 'Wydawnictwo Literackie', 2001, '9788373191723', 'dostępna'),
+    ('Harry Potter i Kamień Filozoficzny', 'J.K. Rowling', 'Media Rodzina', 1999, '9788372780331', 'dostępna'),
+    ('Zbrodnia i Kara', 'Fiodor Dostojewski', 'Czytelnik', 2010, '9788307026319', 'dostępna'),
+    ('Wiedźmin: Ostatnie Życzenie', 'Andrzej Sapkowski', 'SuperNOWA', 2008, '9788375542019', 'dostępna'),
+    ('To', 'Stephen King', 'Albatros', 2018, '9788328014584', 'dostępna'),
+    ('Hobbit, czyli Tam i Z Powrotem', 'J.R.R. Tolkien', 'Wydawnictwo Literackie', 2003, '9788373191044', 'dostępna'),
+    ('Mistrz i Małgorzata', 'Michaił Bułhakow', 'Iskry', 2001, '9788320710048', 'dostępna'),
+    ('Ania z Zielonego Wzgórza', 'Lucy Maud Montgomery', 'Wydawnictwo Ameet', 2018, '9788381517854', 'dostępna'),
+    ('Duma i Uprzedzenie', 'Jane Austen', 'Zielona Sowa', 2013, '9788362447170', 'dostępna'),
+    ('Dracula', 'Bram Stoker', 'Prószyński i S-ka', 2003, '9788373270801', 'dostępna'),
+    ('1984', 'George Orwell', 'Dom Wydawniczy REBIS', 2018, '9788389141418', 'dostępna');
+
 
 -- Insert sample loans into the "Loans" table
 INSERT INTO Loans (UserID, BookID, LoanDate, DueDate, ReturnDate)
