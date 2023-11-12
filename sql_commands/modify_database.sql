@@ -26,8 +26,11 @@ CREATE TABLE Users (
     FirstName VARCHAR(50),
     LastName VARCHAR(50),
     Address VARCHAR(100),
-    PhoneNumber VARCHAR(15),
+    PhoneNumber VARCHAR(15) UNIQUE,
     CardNumber VARCHAR(20) UNIQUE,
+    Email VARCHAR(50) UNIQUE,
+    Login VARCHAR(20) UNIQUE,
+    Password VARCHAR(20),
     Role ENUM('czytelnik', 'bibliotekarz')
 );
 
@@ -35,7 +38,8 @@ CREATE TABLE Users (
 CREATE TABLE Books (
     BookID INT AUTO_INCREMENT PRIMARY KEY,
     Title VARCHAR(100),
-    AuthorFullName VARCHAR(100), -- Zamiast AuthorID
+    AuthorLastName VARCHAR(100),
+    AuthorFirstName VARCHAR(100),
     Publisher VARCHAR(50),
     PublicationYear INT,
     ISBN VARCHAR(13) UNIQUE,
@@ -50,6 +54,7 @@ CREATE TABLE Loans (
     LoanDate DATE,
     DueDate DATE,
     ReturnDate DATE,
+    Status ENUM('aktywne', 'zrealizowane'),
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (BookID) REFERENCES Books(BookID)
 );
@@ -60,7 +65,7 @@ CREATE TABLE Reservations (
     UserID INT,
     BookID INT,
     ReservationDate DATE,
-    Status ENUM('aktywna', 'zrealizowana', 'anulowana'),
+    Status ENUM('aktywna', 'zrealizowana'),
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (BookID) REFERENCES Books(BookID)
 );

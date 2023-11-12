@@ -3,7 +3,6 @@ DELETE FROM Loans;
 DELETE FROM Reports;
 DELETE FROM Reservations;
 DELETE FROM Books;
-DELETE FROM Authors;
 DELETE FROM Users;
 
 -- Insert sample users into the "Users" table
