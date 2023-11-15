@@ -1,24 +1,6 @@
--- Drop chosen tables
-DROP TABLE IF EXISTS Reports;
-DROP TABLE IF EXISTS Reservations;
-DROP TABLE IF EXISTS Loans;
-DROP TABLE IF EXISTS Books;
-DROP TABLE IF EXISTS Users;
-
--- Delete database "libraryDB"
-DROP DATABASE libraryDB;
-
--- Auto-increment reset
-ALTER TABLE Users AUTO_INCREMENT = 1;
-ALTER TABLE Books AUTO_INCREMENT = 1;
-ALTER TABLE Reservations AUTO_INCREMENT = 1;
-ALTER TABLE Reports AUTO_INCREMENT = 1;
-
--- Create database "libraryDB"
-CREATE DATABASE libraryDB;
-
--- Operations on "libraryDB" database
-USE libraryDB;
+--DROP DATABASE libraryDB;
+--CREATE DATABASE libraryDB;
+--USE libraryDB;
 
 -- Create table "Users"
 CREATE TABLE Users (
