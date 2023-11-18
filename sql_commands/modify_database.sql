@@ -12,8 +12,8 @@ CREATE TABLE Users (
     CardNumber VARCHAR(20) UNIQUE,
     Email VARCHAR(50) UNIQUE,
     Login VARCHAR(20) UNIQUE,
-    Password VARCHAR(20),
-    Role ENUM('czytelnik', 'bibliotekarz')
+    UserPassword VARCHAR(255),
+    UserRole ENUM('czytelnik', 'bibliotekarz')
 );
 
 -- Create table "Books"
@@ -25,7 +25,7 @@ CREATE TABLE Books (
     Publisher VARCHAR(50),
     PublicationYear INT,
     ISBN VARCHAR(13) UNIQUE,
-    Availability ENUM('dostępna', 'wypożyczona', 'zarezerwowana')
+    BookAvailability ENUM('dostępna', 'wypożyczona', 'zarezerwowana')
 );
 
 -- Create table "Loans"

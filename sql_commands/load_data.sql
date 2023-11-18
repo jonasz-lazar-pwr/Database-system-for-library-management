@@ -6,25 +6,27 @@
 --DELETE FROM Users;
 
 -- Insert sample users into the "Users" table
-INSERT INTO Users (FirstName, LastName, Address, PhoneNumber, CardNumber, Email, Login, Password, Role)
+INSERT INTO Users (FirstName, LastName, Address, PhoneNumber, CardNumber, Email, Login, UserPassword, UserRole)
 VALUES
-    ('Jan', 'Kowalski', 'ul. Kwiatowa 1, Warszawa', '+48 123 456 789', 'A12345', 'jan.kowalski@email.com', 'jan123', 'password123', 'czytelnik'),
-    ('Anna', 'Nowak', 'ul. Leśna 2, Kraków', '+48 987 654 321', 'B67890', 'anna.nowak@email.com', 'anna456', 'password456', 'czytelnik'),
-    ('Piotr', 'Wiśniewski', 'ul. Słoneczna 3, Gdańsk', '+48 555 333 111', 'C24680', 'piotr.wisniewski@email.com', 'piotr789', 'password789', 'czytelnik'),
-    ('Maria', 'Jankowska', 'ul. Zielona 4, Poznań', '+48 111 222 333', 'D13579', 'maria.jankowska@email.com', 'maria101', 'password101', 'czytelnik'),
-    ('Krzysztof', 'Nowicki', 'ul. Ogrodowa 5, Wrocław', '+48 888 999 000', 'E35791', 'krzysztof.nowicki@email.com', 'krzysztof2022', 'password2022', 'czytelnik'),
-    ('Ewa', 'Kwiatkowska', 'ul. Polna 6, Łódź', '+48 000 333 444', 'F24680', 'ewa.kwiatkowska@email.com', 'ewa333', 'password333', 'czytelnik'),
-    ('Andrzej', 'Lewandowski', 'ul. Górska 7, Katowice', '+48 777 888 999', 'G13579', 'andrzej.lewandowski@email.com', 'andrzej777', 'password777', 'czytelnik'),
-    ('Barbara', 'Kaczor', 'ul. Wiosenna 8, Lublin', '+48 444 555 666', 'H35791', 'barbara.kaczor@email.com', 'barbara888', 'password888', 'czytelnik'),
-    ('Marek', 'Dąbrowski', 'ul. Dolna 9, Szczecin', '+48 666 777 888', 'I24680', 'marek.dabrowski@email.com', 'marek999', 'password999', 'czytelnik'),
-    ('Agnieszka', 'Wojciechowska', 'ul. Szkolna 10, Bydgoszcz', '+48 333 000 555', 'J13579', 'agnieszka.wojciechowska@email.com', 'agnieszka11', 'password11', 'czytelnik'),
-    ('Alicja', 'Bibliotekarska', 'ul. Biblioteczna 1, Warszawa', '+48 111 222 555', 'B12345', 'alicja.bibliotekarska@email.com', 'alicja_lib', 'password_lib', 'bibliotekarz'),
-    ('Bartosz', 'Bibliotekarski', 'ul. Książkowa 2, Kraków', '+48 222 333 444', 'B67891', 'bartosz.bibliotekarski@email.com', 'bartosz_lib', 'password_lib', 'bibliotekarz'),
-    ('Cezary', 'Bibliotekarski', 'ul. Wypożyczalna 3, Gdańsk', '+48 333 444 555', 'C13579', 'cezary.bibliotekarski@email.com', 'cezary_lib', 'password_lib', 'bibliotekarz');
+    ('Jan', 'Kowalski', 'ul. Kwiatowa 1, Warszawa', '+48 123 456 789', 'A12345', 'jan.kowalski@email.com', 'jan123', MD5('password123'), 'czytelnik'),
+    ('Anna', 'Nowak', 'ul. Leśna 2, Kraków', '+48 987 654 321', 'B67890', 'anna.nowak@email.com', 'anna456', MD5('password456'), 'czytelnik'),
+    ('Piotr', 'Wiśniewski', 'ul. Słoneczna 3, Gdańsk', '+48 555 333 111', 'C24680', 'piotr.wisniewski@email.com', 'piotr789', MD5('password789'), 'czytelnik'),
+    ('Maria', 'Jankowska', 'ul. Zielona 4, Poznań', '+48 111 222 333', 'D13579', 'maria.jankowska@email.com', 'maria101', MD5('password101'), 'czytelnik'),
+    ('Krzysztof', 'Nowicki', 'ul. Ogrodowa 5, Wrocław', '+48 888 999 000', 'E35791', 'krzysztof.nowicki@email.com', 'krzysztof2022', MD5('password2022'), 'czytelnik'),
+    ('Ewa', 'Kwiatkowska', 'ul. Polna 6, Łódź', '+48 000 333 444', 'F24680', 'ewa.kwiatkowska@email.com', 'ewa333', MD5('password333'), 'czytelnik'),
+    ('Andrzej', 'Lewandowski', 'ul. Górska 7, Katowice', '+48 777 888 999', 'G13579', 'andrzej.lewandowski@email.com', 'andrzej777', MD5('password777'), 'czytelnik'),
+    ('Barbara', 'Kaczor', 'ul. Wiosenna 8, Lublin', '+48 444 555 666', 'H35791', 'barbara.kaczor@email.com', 'barbara888', MD5('password888'), 'czytelnik'),
+    ('Marek', 'Dąbrowski', 'ul. Dolna 9, Szczecin', '+48 666 777 888', 'I24680', 'marek.dabrowski@email.com', 'marek999', MD5('password999'), 'czytelnik'),
+    ('Agnieszka', 'Wojciechowska', 'ul. Szkolna 10, Bydgoszcz', '+48 333 000 555', 'J13579', 'agnieszka.wojciechowska@email.com', 'agnieszka11', MD5('password11'), 'czytelnik'),
+    ('Alicja', 'Bibliotekarska', 'ul. Biblioteczna 1, Warszawa', '+48 111 222 555', 'B12345', 'alicja.bibliotekarska@email.com', 'alicja_lib', MD5('password_lib'), 'bibliotekarz'),
+    ('Bartosz', 'Bibliotekarski', 'ul. Książkowa 2, Kraków', '+48 222 333 444', 'B67891', 'bartosz.bibliotekarski@email.com', 'bartosz_lib', MD5('password_lib'), 'bibliotekarz'),
+    ('Cezary', 'Bibliotekarski', 'ul. Wypożyczalna 3, Gdańsk', '+48 333 444 555', 'C13579', 'cezary.bibliotekarski@email.com', 'cezary_lib', MD5('password_lib'), 'bibliotekarz'),
+    ('Użytkownik', 'Czytelnicki', 'ul. Żadna 0, Nigdzie', '+48 997', 'X00000', 'user.user@mail.com', 'user', MD5('user'), 'czytelnik'),
+    ('Administrator', 'Admiński', 'ul. Nie -1, Wczoraj', '+48 500 500 500', 'Y00000', 'admin.admin@mail.com', 'admin', MD5('admin'), 'bibliotekarz');
 
 
 -- Insert sample books into the "Books" table
-INSERT INTO Books (Title, AuthorLastName, AuthorFirstName, Publisher, PublicationYear, ISBN, Availability)
+INSERT INTO Books (Title, AuthorLastName, AuthorFirstName, Publisher, PublicationYear, ISBN, BookAvailability)
 VALUES
     ('Władca Pierścieni: Drużyna Pierścienia', 'Tolkien', 'J.R.R.', 'Wydawnictwo Literackie', 2001, '9788373191723', 'dostępna'),
     ('Harry Potter i Kamień Filozoficzny', 'Rowling', 'J.K.', 'Media Rodzina', 1999, '9788372780331', 'dostępna'),
