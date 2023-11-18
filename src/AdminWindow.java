@@ -1,13 +1,5 @@
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.sql.*;
-import java.util.Arrays;
-import java.sql.Connection;
-import java.util.Objects;
+
 public class AdminWindow extends JFrame{
     public AdminWindow(){
         setTitle("Książkowość - zarządzanie biblioteką");

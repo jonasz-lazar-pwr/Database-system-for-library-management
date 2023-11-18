@@ -11,9 +11,9 @@ import java.util.Objects;
 
 public class LoginWindow extends JFrame {
 
-    String jdbcUrl;
-    String dbUsername;
-    String dbPassword;
+    private String jdbcUrl;
+    private String dbUsername;
+    private String dbPassword;
     private JTextField usernameField;
     private JPasswordField passwordField;
 
@@ -76,7 +76,7 @@ public class LoginWindow extends JFrame {
         registerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                RegisterWindow registration = new RegisterWindow(jdbcUrl, dbUsername, dbPassword);
             }
         });
 
