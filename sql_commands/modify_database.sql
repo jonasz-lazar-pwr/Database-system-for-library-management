@@ -1,6 +1,12 @@
---DROP DATABASE libraryDB;
---CREATE DATABASE libraryDB;
---USE libraryDB;
+-- DROP TABLE IF EXISTS Reports;
+-- DROP TABLE IF EXISTS Reservations;
+-- DROP TABLE IF EXISTS Loans;
+-- DROP TABLE IF EXISTS Books;
+-- DROP TABLE IF EXISTS Users;
+
+-- DROP DATABASE libraryDB;
+-- CREATE DATABASE libraryDB;
+USE libraryDB;
 
 -- Create table "Users"
 CREATE TABLE Users (

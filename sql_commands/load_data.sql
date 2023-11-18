@@ -1,9 +1,8 @@
--- Clear chosen tables
---DELETE FROM Loans;
---DELETE FROM Reports;
---DELETE FROM Reservations;
---DELETE FROM Books;
---DELETE FROM Users;
+-- DELETE FROM Loans;
+-- DELETE FROM Reports;
+-- DELETE FROM Reservations;
+-- DELETE FROM Books;
+-- DELETE FROM Users;
 
 -- Insert sample users into the "Users" table
 INSERT INTO Users (FirstName, LastName, Address, PhoneNumber, CardNumber, Email, Login, UserPassword, UserRole)
