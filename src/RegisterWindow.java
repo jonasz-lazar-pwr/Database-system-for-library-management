@@ -64,8 +64,6 @@ public class RegisterWindow extends JFrame {
         registerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Tutaj możesz dodać kod obsługujący proces rejestracji
-                // Pobierz dane z pól tekstowych
                 String firstName = firstNameField.getText();
                 String lastName = lastNameField.getText();
                 String address = addressField.getText();
@@ -78,7 +76,6 @@ public class RegisterWindow extends JFrame {
                 try {
                     Connection connection = DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword);
 
-                    // Używamy PreparedStatement, aby uniknąć ataków SQL Injection
                     String query = "INSERT INTO Users (FirstName, LastName, Address, PhoneNumber, CardNumber, Email, Login, UserPassword, UserRole)\n" +
                             "VALUES\n" +
                             "    (?, ?, ?, ?, ?, ?, ?, MD5(?), ?)";
@@ -93,7 +90,6 @@ public class RegisterWindow extends JFrame {
                         preparedStatement.setString(8, password);
                         preparedStatement.setString(9, "czytelnik");
 
-                        // Wykonaj zapytanie
                         int rowsAdded = preparedStatement.executeUpdate();
                         System.out.println(rowsAdded + " wiersz(y) dodano.");
 
