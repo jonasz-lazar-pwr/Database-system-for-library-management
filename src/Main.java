@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
@@ -18,7 +19,7 @@ public class Main {
         String dbUsername = properties.getProperty("dbUsername");
         String dbPassword = properties.getProperty("dbPassword");
 
-        LoginWindow login = new LoginWindow(jdbcUrl, dbUsername, dbPassword);
+        SwingUtilities.invokeLater(() -> new LoginWindow(jdbcUrl, dbUsername, dbPassword));
 
     }
 }
