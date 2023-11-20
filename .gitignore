@@ -334,4 +334,4 @@ hs_err_pid*
 replay_pid*
 
 ### Root login###
-db.properties
+app.properties

@@ -15,17 +15,24 @@ public class LoginWindow extends JFrame {
     private final String dbUsername;
     private final String dbPassword;
 
+    private final int mainR;
+    private final int mainG;
+    private final int mainB;
+
     private MyTextField usernameField;
     private JPasswordField passwordField;
 
     private JPanel textFieldPanel;
     private JPanel buttonPanel;
 
-    public LoginWindow(String jdbcUrl, String dbUsername, String dbPassword) {
+    public LoginWindow(String jdbcUrl, String dbUsername, String dbPassword, int mainR, int mainG, int mainB) {
         // Ustawienia połączenia z bazą danych
         this.jdbcUrl = jdbcUrl;
         this.dbUsername = dbUsername;
         this.dbPassword = dbPassword;
+        this.mainR = mainR;
+        this.mainG = mainG;
+        this.mainB = mainB;
 
         initComponents();
 
@@ -55,7 +62,7 @@ public class LoginWindow extends JFrame {
         textFieldPanel.setOpaque(false);
 
         // Pole tekstowe przyjmujące login użytkownika
-        usernameField = new MyTextField("Login");
+        usernameField = new MyTextField("Login", mainR, mainG, mainB);
 
         usernameField.addFocusListener(new FocusListener() {
             @Override
@@ -78,10 +85,13 @@ public class LoginWindow extends JFrame {
         passwordField.setEchoChar((char) 0); // Wyłącz kropki
         passwordField.setPreferredSize(new Dimension(200,55));
         passwordField.setFont(new Font("Roboto", Font.PLAIN, 15));
-        passwordField.setForeground(Color.DARK_GRAY);
-        passwordField.setBackground(Color.LIGHT_GRAY);
-        passwordField.setCaretColor(Color.DARK_GRAY);
-        passwordField.setBorder(new LineBorder(new Color(58, 88, 159)));
+//        passwordField.setForeground(Color.DARK_GRAY);
+//        passwordField.setBackground(Color.LIGHT_GRAY);
+//        passwordField.setCaretColor(Color.DARK_GRAY);
+        passwordField.setForeground(Color.LIGHT_GRAY);
+        passwordField.setBackground(Color.DARK_GRAY);
+        passwordField.setCaretColor(Color.LIGHT_GRAY);
+        passwordField.setBorder(new LineBorder(new Color(mainR, mainG, mainB)));
         passwordField.setHorizontalAlignment(0);
 
         passwordField.addFocusListener(new FocusListener() {
@@ -118,7 +128,7 @@ public class LoginWindow extends JFrame {
         MyButton loginButton = getMyButton();
 
         // Przycisk odpowiedzialny za rejestrowanie nowego użytkownika
-        MyButton registerButton = new MyButton("Zarejestruj się");
+        MyButton registerButton = new MyButton("Zarejestruj się", mainR, mainG, mainB);
 
         registerButton.addActionListener(e -> {
             SwingUtilities.invokeLater(() -> new RegisterWindow(jdbcUrl, dbUsername, dbPassword));
@@ -131,7 +141,7 @@ public class LoginWindow extends JFrame {
     }
 
     private MyButton getMyButton() {
-        MyButton loginButton = new MyButton("Zaloguj się");
+        MyButton loginButton = new MyButton("Zaloguj się", mainR, mainG, mainB);
 
         loginButton.addActionListener(e -> {
             String username = usernameField.getText();
