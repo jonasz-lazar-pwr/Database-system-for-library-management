@@ -1,5 +1,4 @@
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -9,7 +8,7 @@ import java.sql.*;
 import java.sql.Connection;
 import java.util.Objects;
 
-public class LoginWindow extends JFrame {
+public class LoginWindow extends JFrame implements FocusListener {
 
     private final String jdbcUrl;
     private final String dbUsername;
@@ -20,7 +19,7 @@ public class LoginWindow extends JFrame {
     private final int mainB;
 
     private MyTextField usernameField;
-    private JPasswordField passwordField;
+    private MyPasswordField passwordField;
 
     private JPanel textFieldPanel;
     private JPanel buttonPanel;
@@ -30,6 +29,7 @@ public class LoginWindow extends JFrame {
         this.jdbcUrl = jdbcUrl;
         this.dbUsername = dbUsername;
         this.dbPassword = dbPassword;
+
         this.mainR = mainR;
         this.mainG = mainG;
         this.mainB = mainB;
@@ -38,7 +38,7 @@ public class LoginWindow extends JFrame {
 
         // Ustawienia okna
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setTitle("System obsługi biblioteki");
+        setTitle("System obsługi biblioteki - logowanie");
         setSize(500, 500);
         setLocationRelativeTo(null);
         setResizable(false);
@@ -63,59 +63,13 @@ public class LoginWindow extends JFrame {
 
         // Pole tekstowe przyjmujące login użytkownika
         usernameField = new MyTextField("Login", mainR, mainG, mainB);
-
-        usernameField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                if (usernameField.getText().equals("Login")) {
-                    usernameField.setText("");
-                }
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                if (usernameField.getText().isEmpty()) {
-                    usernameField.setText("Login");
-                }
-            }
-        });
+        usernameField.addFocusListener(this);
+        textFieldPanel.add(usernameField);
 
         // Pole tekstowe przyjmujące hasło użytkownika
-        passwordField = new JPasswordField("Hasło");
-        passwordField.setEchoChar((char) 0); // Wyłącz kropki
-        passwordField.setPreferredSize(new Dimension(200,55));
-        passwordField.setFont(new Font("Roboto", Font.PLAIN, 15));
-//        passwordField.setForeground(Color.DARK_GRAY);
-//        passwordField.setBackground(Color.LIGHT_GRAY);
-//        passwordField.setCaretColor(Color.DARK_GRAY);
-        passwordField.setForeground(Color.LIGHT_GRAY);
-        passwordField.setBackground(Color.DARK_GRAY);
-        passwordField.setCaretColor(Color.LIGHT_GRAY);
-        passwordField.setBorder(new LineBorder(new Color(mainR, mainG, mainB)));
-        passwordField.setHorizontalAlignment(0);
-
-        passwordField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                char[] passwordChars = passwordField.getPassword();
-                String passwordText = new String(passwordChars);
-
-                if (passwordText.equals("Hasło")) {
-                    passwordField.setEchoChar('\u2022');
-                    passwordField.setText("");
-                }
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                char[] passwordChars = passwordField.getPassword();
-                String passwordText = new String(passwordChars);
-                if (passwordText.isEmpty()) {
-                    passwordField.setEchoChar((char) 0);
-                    passwordField.setText("Hasło");
-                }
-            }
-        });
+        passwordField = new MyPasswordField("Hasło", mainR, mainG, mainB);
+        passwordField.addFocusListener(this);
+        textFieldPanel.add(passwordField);
 
         // Panel z przyciskami
         buttonPanel = new JPanel();
@@ -126,17 +80,15 @@ public class LoginWindow extends JFrame {
 
         // Przycisk odpowiedzialny za logowanie
         MyButton loginButton = getMyButton();
+        buttonPanel.add(loginButton);
 
         // Przycisk odpowiedzialny za rejestrowanie nowego użytkownika
         MyButton registerButton = new MyButton("Zarejestruj się", mainR, mainG, mainB);
 
         registerButton.addActionListener(e -> {
+            dispose();
             SwingUtilities.invokeLater(() -> new RegisterWindow(jdbcUrl, dbUsername, dbPassword));
         });
-
-        textFieldPanel.add(usernameField);
-        textFieldPanel.add(passwordField);
-        buttonPanel.add(loginButton);
         buttonPanel.add(registerButton);
     }
 
@@ -156,15 +108,17 @@ public class LoginWindow extends JFrame {
                 int check = checkUserPassword(username, password);
                 if (check==1){
                     System.out.println("Zalogowano jako czytelnik");
+                    dispose();
                     SwingUtilities.invokeLater(UserWindow::new);
                     dispose();
                 } else if (check == 2) {
                     System.out.println("Zalogowano jako bibliotekarz");
+                    dispose();
                     SwingUtilities.invokeLater(AdminWindow::new);
                     dispose();
                 } else {
                     JOptionPane.showMessageDialog(LoginWindow.this,
-                                                        "Niepoprawne hasło",
+                                                        "Niepoprawne hasło!",
                                                             "Błąd", JOptionPane.ERROR_MESSAGE);
                 }
             }
@@ -210,7 +164,8 @@ public class LoginWindow extends JFrame {
             Connection connection = DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword);
 
             // PreparedStatement, by uniknąć ataków SQL Injection
-            String query = "SELECT UserPassword, UserRole FROM Users WHERE Login=?";
+            String query = "SELECT UserPassword, UserRole FROM Users WHERE Login = ?";
+
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setString(1, username);
 
@@ -251,5 +206,37 @@ public class LoginWindow extends JFrame {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    @Override
+    public void focusGained(FocusEvent e) {
+        if (e.getSource() == usernameField) {
+            if (usernameField.getText().equals("Login")) {
+                usernameField.setText("");
+            }
+        } else if (e.getSource() == passwordField) {
+            String passwordText = new String(passwordField.getPassword());
+
+            if (passwordText.equals("Hasło")) {
+                passwordField.setEchoChar('\u2022');
+                passwordField.setText("");
+            }
+        }
+    }
+
+    @Override
+    public void focusLost(FocusEvent e) {
+        if (e.getSource() == usernameField) {
+            if (usernameField.getText().isEmpty()) {
+                usernameField.setText("Login");
+            }
+        } else if (e.getSource() == passwordField) {
+            String passwordText = new String(passwordField.getPassword());
+
+            if (passwordText.isEmpty()) {
+                passwordField.setEchoChar((char) 0);
+                passwordField.setText("Hasło");
+            }
+        }
     }
 }
