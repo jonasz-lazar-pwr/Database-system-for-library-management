@@ -1,8 +1,8 @@
--- DROP TABLE IF EXISTS Reports;
--- DROP TABLE IF EXISTS Reservations;
--- DROP TABLE IF EXISTS Loans;
--- DROP TABLE IF EXISTS Books;
--- DROP TABLE IF EXISTS Users;
+DROP TABLE IF EXISTS Reports;
+DROP TABLE IF EXISTS Reservations;
+DROP TABLE IF EXISTS Loans;
+DROP TABLE IF EXISTS Books;
+DROP TABLE IF EXISTS Users;
 
 -- DROP DATABASE libraryDB;
 -- CREATE DATABASE libraryDB;
@@ -11,35 +11,35 @@ USE libraryDB;
 
 -- Create table "Users"
 CREATE TABLE Users (
-    UserID INT AUTO_INCREMENT PRIMARY KEY,
-    FirstName VARCHAR(50),
-    LastName VARCHAR(50),
-    Address VARCHAR(100),
-    PhoneNumber VARCHAR(15) UNIQUE,
-    CardNumber VARCHAR(20) UNIQUE,
-    Email VARCHAR(50) UNIQUE,
-    Login VARCHAR(20) UNIQUE,
-    UserPassword VARCHAR(255),
+    UserID INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    FirstName VARCHAR(50) NOT NULL,
+    LastName VARCHAR(50) NOT NULL,
+    Address VARCHAR(100) NOT NULL,
+    PhoneNumber VARCHAR(15) UNIQUE NOT NULL,
+    CardNumber VARCHAR(20) UNIQUE NOT NULL,
+    Email VARCHAR(50) UNIQUE NOT NULL,
+    Login VARCHAR(20) UNIQUE NOT NULL,
+    UserPassword VARCHAR(255) NOT NULL,
     UserRole ENUM('czytelnik', 'bibliotekarz')
         CHECK (UserRole IN ('czytelnik', 'bibliotekarz'))
 );
 
 -- Create table "Books"
 CREATE TABLE Books (
-    BookID INT AUTO_INCREMENT PRIMARY KEY,
-    Title VARCHAR(100),
-    AuthorLastName VARCHAR(100),
-    AuthorFirstName VARCHAR(100),
-    Publisher VARCHAR(50),
-    PublicationYear INT,
-    ISBN VARCHAR(13) UNIQUE,
+    BookID INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    Title VARCHAR(100) NOT NULL,
+    AuthorLastName VARCHAR(100) NOT NULL,
+    AuthorFirstName VARCHAR(100) NOT NULL,
+    Publisher VARCHAR(50) NOT NULL,
+    PublicationYear INT NOT NULL,
+    ISBN VARCHAR(13) UNIQUE NOT NULL,
     BookAvailability ENUM('dostępna', 'wypożyczona', 'zarezerwowana')
         CHECK (BookAvailability IN ('dostępna', 'wypożyczona', 'zarezerwowana'))
 );
 
 -- Create table "Loans"
 CREATE TABLE Loans (
-    LoanID INT AUTO_INCREMENT PRIMARY KEY,
+    LoanID INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
     UserID INT NOT NULL,
     BookID INT NOT NULL,
     LoanDate DATE NOT NULL,
@@ -53,11 +53,11 @@ CREATE TABLE Loans (
 
 -- Create table "Reservations"
 CREATE TABLE Reservations (
-    ReservationID INT AUTO_INCREMENT PRIMARY KEY,
+    ReservationID INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
     UserID INT NOT NULL,
     BookID INT NOT NULL,
     ReservationDate DATE NOT NULL,
-    Status ENUM('aktywna', 'zrealizowana'),
+    Status ENUM('aktywna', 'zrealizowana')
         CHECK (Status IN ('aktywna', 'zrealizowana')),
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (BookID) REFERENCES Books(BookID)
@@ -65,11 +65,11 @@ CREATE TABLE Reservations (
 
 -- Create table "Reports"
 CREATE TABLE Reports (
-    ReportID INT AUTO_INCREMENT PRIMARY KEY,
-    Title VARCHAR(100),
-    Description TEXT,
-    GenerationDate DATETIME,
-    ReportContent TEXT,
-    GeneratedByUserID INT,
+    ReportID INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    Title VARCHAR(100) NOT NULL,
+    Description TEXT NOT NULL,
+    GenerationDate DATETIME NOT NULL,
+    ReportContent TEXT NOT NULL,
+    GeneratedByUserID INT NOT NULL,
     FOREIGN KEY (GeneratedByUserID) REFERENCES Users(UserID)
 );
