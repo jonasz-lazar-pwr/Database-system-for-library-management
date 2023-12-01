@@ -6,6 +6,7 @@
 
 -- DROP DATABASE libraryDB;
 -- CREATE DATABASE libraryDB;
+
 USE libraryDB;
 
 -- Create table "Users"
@@ -20,6 +21,7 @@ CREATE TABLE Users (
     Login VARCHAR(20) UNIQUE,
     UserPassword VARCHAR(255),
     UserRole ENUM('czytelnik', 'bibliotekarz')
+        CHECK (UserRole IN ('czytelnik', 'bibliotekarz'))
 );
 
 -- Create table "Books"
@@ -32,17 +34,19 @@ CREATE TABLE Books (
     PublicationYear INT,
     ISBN VARCHAR(13) UNIQUE,
     BookAvailability ENUM('dostępna', 'wypożyczona', 'zarezerwowana')
+        CHECK (BookAvailability IN ('dostępna', 'wypożyczona', 'zarezerwowana'))
 );
 
 -- Create table "Loans"
 CREATE TABLE Loans (
     LoanID INT AUTO_INCREMENT PRIMARY KEY,
-    UserID INT,
-    BookID INT,
-    LoanDate DATE,
-    DueDate DATE,
-    ReturnDate DATE,
-    Status ENUM('aktywne', 'zrealizowane'),
+    UserID INT NOT NULL,
+    BookID INT NOT NULL,
+    LoanDate DATE NOT NULL,
+    DueDate DATE NOT NULL,
+    ReturnDate DATE NOT NULL,
+    Status ENUM('aktywne', 'zrealizowane')
+        CHECK (Status IN ('aktywne', 'zrealizowane')),
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (BookID) REFERENCES Books(BookID)
 );
@@ -50,10 +54,11 @@ CREATE TABLE Loans (
 -- Create table "Reservations"
 CREATE TABLE Reservations (
     ReservationID INT AUTO_INCREMENT PRIMARY KEY,
-    UserID INT,
-    BookID INT,
-    ReservationDate DATE,
+    UserID INT NOT NULL,
+    BookID INT NOT NULL,
+    ReservationDate DATE NOT NULL,
     Status ENUM('aktywna', 'zrealizowana'),
+        CHECK (Status IN ('aktywna', 'zrealizowana')),
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (BookID) REFERENCES Books(BookID)
 );
