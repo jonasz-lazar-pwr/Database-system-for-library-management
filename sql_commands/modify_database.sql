@@ -44,7 +44,7 @@ CREATE TABLE Loans (
     BookID INT NOT NULL,
     LoanDate DATE NOT NULL,
     DueDate DATE NOT NULL,
-    ReturnDate DATE NOT NULL,
+    ReturnDate DATE,
     Status ENUM('aktywne', 'zrealizowane')
         CHECK (Status IN ('aktywne', 'zrealizowane')),
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
@@ -57,8 +57,8 @@ CREATE TABLE Reservations (
     UserID INT NOT NULL,
     BookID INT NOT NULL,
     ReservationDate DATE NOT NULL,
-    Status ENUM('aktywna', 'zrealizowana')
-        CHECK (Status IN ('aktywna', 'zrealizowana')),
+    Status ENUM('aktywna', 'zrealizowana', 'anulowana')
+        CHECK (Status IN ('aktywna', 'zrealizowana', 'anulowana')),
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (BookID) REFERENCES Books(BookID)
 );
