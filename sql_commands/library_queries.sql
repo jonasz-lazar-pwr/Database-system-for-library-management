@@ -73,3 +73,41 @@ WHERE BookID = 5;
 
 DELETE FROM Books
 WHERE BookID = 5;
+
+-- ---------- ZARZĄDZANIE ----------
+CREATE VIEW BookView AS
+SELECT
+    Title AS BookTitle,
+    CONCAT(AuthorFirstName, ' ', AuthorLastName) AS AuthorFullName,
+    PublicationYear,
+    BookAvailability
+FROM
+    Books;
+
+
+
+
+CREATE VIEW UserReservationsView AS
+SELECT
+    U.Login AS login,
+    B.Title AS title,
+    R.ReservationDate AS reservation_date,
+    R.Status AS status
+FROM
+    Reservations R
+JOIN Users U ON R.UserID = U.UserID
+JOIN Books B ON R.BookID = B.BookID;
+
+
+
+CREATE VIEW UserLoansView AS
+SELECT
+    U.Login AS login,
+    B.Title AS title,
+    L.LoanDate AS loan_date,
+    L.ReturnDate AS return_date,
+    L.Status AS status
+FROM
+    Loans L
+JOIN Users U ON L.UserID = U.UserID
+JOIN Books B ON L.BookID = B.BookID;

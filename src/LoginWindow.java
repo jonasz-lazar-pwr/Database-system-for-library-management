@@ -24,6 +24,7 @@ public class LoginWindow extends JFrame implements FocusListener {
     private JPanel textFieldPanel;
     private JPanel buttonPanel;
 
+
     public LoginWindow(String jdbcUrl, String dbUsername, String dbPassword, int mainR, int mainG, int mainB) {
         // Ustawienia połączenia z bazą danych
         this.jdbcUrl = jdbcUrl;
@@ -109,7 +110,9 @@ public class LoginWindow extends JFrame implements FocusListener {
                 if (check==1){
                     System.out.println("Zalogowano jako czytelnik");
                     dispose();
-                    SwingUtilities.invokeLater(UserWindow::new);
+                    SwingUtilities.invokeLater(() -> {
+                        UserWindow userWindow = new UserWindow(jdbcUrl, dbUsername, dbPassword, username);
+                    });
                     dispose();
                 } else if (check == 2) {
                     System.out.println("Zalogowano jako bibliotekarz");
@@ -118,14 +121,14 @@ public class LoginWindow extends JFrame implements FocusListener {
                     dispose();
                 } else {
                     JOptionPane.showMessageDialog(LoginWindow.this,
-                                                        "Niepoprawne hasło!",
-                                                            "Błąd", JOptionPane.ERROR_MESSAGE);
+                            "Niepoprawne hasło!",
+                            "Błąd", JOptionPane.ERROR_MESSAGE);
                 }
             }
             else {
                 JOptionPane.showMessageDialog(LoginWindow.this,
-                                                    "Nieprawidłowe dane logowania!",
-                                                        "Błąd", JOptionPane.ERROR_MESSAGE);
+                        "Nieprawidłowe dane logowania!",
+                        "Błąd", JOptionPane.ERROR_MESSAGE);
             }
 
         });
