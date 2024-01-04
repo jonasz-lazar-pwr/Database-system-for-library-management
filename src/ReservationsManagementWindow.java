@@ -1,8 +1,8 @@
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -11,39 +11,82 @@ public class ReservationsManagementWindow extends JFrame {
     private final String jdbcUrl;
     private final String dbUsername;
     private final String dbPassword;
-    private String username;
+    private final String username;
+
+    private final int mainR;
+    private final int mainG;
+    private final int mainB;
+
+    private JPanel panel;
     private JTable reservationsTable;
 
-    public ReservationsManagementWindow(String jdbcUrl, String dbUsername, String dbPassword, String username) {
+    public ReservationsManagementWindow(String jdbcUrl, String dbUsername, String dbPassword, String username, int mainR, int mainG, int mainB) {
+
         this.jdbcUrl = jdbcUrl;
         this.dbUsername = dbUsername;
         this.dbPassword = dbPassword;
         this.username = username;
 
-        setTitle("Zarządzanie rezerwacjami");
-        setSize(500, 350);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setLocationRelativeTo(null);
+        this.mainR = mainR;
+        this.mainG = mainG;
+        this.mainB = mainB;
 
-        JPanel panel = new JPanel(new BorderLayout());
-        JButton cancelReservationButton = new JButton("Anuluj rezerwację");
-        JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        initComponents();
+
+        // Ustawienia okna
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setTitle("System obsługi biblioteki - zarządzanie rezerwacjami");
+        setSize(500, 500);
+        setLocationRelativeTo(null);
+        setResizable(false);
+        //setLayout(null);
+        getContentPane().setBackground(Color.DARK_GRAY);
+        setVisible(true);
+        requestFocusInWindow();
+
+        add(panel);
+    }
+
+    private void initComponents() {
+
+        panel = new JPanel(new BorderLayout());
+        panel.setBackground(Color.LIGHT_GRAY);
+        panel.setOpaque(false);
+
+        JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        buttonsPanel.setBackground(Color.LIGHT_GRAY);
+        buttonsPanel.setOpaque(false);
+
+        MyButton cancelReservationButton = new MyButton("Anuluj rezerwację", mainR, mainG, mainB);
+        cancelReservationButton.setPreferredSize(new Dimension(150, 45));
 
         cancelReservationButton.addActionListener(e -> {
             cancelReservation();
             refreshTable();
         });
 
+        MyButton menuReturnButton = new MyButton("Powrót", mainR, mainG, mainB);
+        menuReturnButton.setPreferredSize(new Dimension(150, 45));
+
+        menuReturnButton.addActionListener(e -> {
+            SwingUtilities.invokeLater(() -> new UserWindow(jdbcUrl, dbUsername, dbPassword, username, mainR, mainG, mainB));
+            dispose();
+        });
+
+        buttonsPanel.add(menuReturnButton);
         buttonsPanel.add(cancelReservationButton);
+
         panel.add(buttonsPanel, BorderLayout.SOUTH);
 
         initializeTable();
 
         JScrollPane scrollPane = new JScrollPane(reservationsTable);
-        panel.add(scrollPane, BorderLayout.CENTER);
+        scrollPane.setForeground(Color.LIGHT_GRAY);
+        scrollPane.setBackground(Color.LIGHT_GRAY);
+        scrollPane.setBorder(new LineBorder(Color.DARK_GRAY));
+        scrollPane.getViewport().setBackground(Color.DARK_GRAY);
 
-        add(panel);
-        setVisible(true);
+        panel.add(scrollPane, BorderLayout.CENTER);
     }
 
     private void initializeTable() {
@@ -58,8 +101,23 @@ public class ReservationsManagementWindow extends JFrame {
             }
         };
         reservationsTable = new JTable(model);
-
         reservationsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        reservationsTable.setFont(new Font("Roboto", Font.PLAIN, 15));
+        reservationsTable.setRowHeight(20);
+        reservationsTable.setForeground(Color.DARK_GRAY);
+        reservationsTable.setBackground(Color.LIGHT_GRAY);
+        reservationsTable.setBorder(new LineBorder(Color.LIGHT_GRAY));
+
+        reservationsTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        reservationsTable.getColumnModel().getColumn(0).setMinWidth(200);
+        reservationsTable.getColumnModel().getColumn(1).setMinWidth(150);
+        reservationsTable.getColumnModel().getColumn(2).setMinWidth(150);
+
+        reservationsTable.getTableHeader().setReorderingAllowed(false);
+        reservationsTable.getTableHeader().setFont(new Font("Roboto", Font.PLAIN, 15));
+        reservationsTable.getTableHeader().setForeground(Color.DARK_GRAY);
+        reservationsTable.getTableHeader().setBackground(Color.LIGHT_GRAY);
+        reservationsTable.getTableHeader().setBorder(new LineBorder(Color.GRAY));
     }
 
     private ArrayList<String[]> fetchReservationsFromDatabase() {

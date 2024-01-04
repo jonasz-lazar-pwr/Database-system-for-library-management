@@ -84,7 +84,7 @@ SELECT
 FROM
     Books;
 
-
+-- -------------------------------------------------
 
 
 CREATE VIEW UserReservationsView AS
@@ -98,10 +98,11 @@ FROM
 JOIN Users U ON R.UserID = U.UserID
 JOIN Books B ON R.BookID = B.BookID;
 
-
+-- -----------------------------------------------
 
 CREATE VIEW UserLoansView AS
 SELECT
+    L.LoanID AS loan_id,
     U.Login AS login,
     B.Title AS title,
     L.LoanDate AS loan_date,
@@ -110,4 +111,77 @@ SELECT
 FROM
     Loans L
 JOIN Users U ON L.UserID = U.UserID
-JOIN Books B ON L.BookID = B.BookID;
+JOIN Books B ON L.BookID = B.BookID
+WHERE
+    L.Status <> 'zrealizowane';
+
+
+-- ---------- RAPORTY ----------
+CREATE VIEW mostPopularBooksView AS
+SELECT
+    b.Title AS BookTitle,
+    CONCAT(b.AuthorFirstName, ' ', b.AuthorLastName) AS AuthorName,
+    b.Publisher AS Publisher,
+    b.PublicationYear AS PublicationYear,
+    COUNT(l.LoanID) AS NumberOfLoans
+FROM
+    Books b
+LEFT JOIN
+    Loans l ON b.BookID = l.BookID
+GROUP BY
+    b.BookID
+ORDER BY
+    NumberOfLoans DESC;
+
+-- -------------------------------------------------
+
+CREATE VIEW mostActiveUsersView AS
+SELECT
+    u.UserID AS UserID,
+    CONCAT(u.FirstName, ' ', u.LastName) AS UserName,
+    u.Login AS UserLogin,
+    COUNT(l.LoanID) AS NumberOfLoans
+FROM
+    Users u
+JOIN
+    Loans l ON u.UserID = l.UserID
+GROUP BY
+    u.UserID
+ORDER BY
+    NumberOfLoans DESC;
+
+-- -----------------------------------------------
+
+CREATE VIEW mostPopularAuthorsView AS
+SELECT
+    b.AuthorFirstName AS AuthorFirstName,
+    b.AuthorLastName AS AuthorLastName,
+    COUNT(l.LoanID) AS NumberOfLoans
+FROM
+    Books b
+LEFT JOIN
+    Loans l ON b.BookID = l.BookID
+GROUP BY
+    b.AuthorFirstName, b.AuthorLastName
+ORDER BY
+    NumberOfLoans DESC;
+
+-- -----------------------------------------------
+
+CREATE VIEW longestNotReturnedBooksView AS
+SELECT
+    b.Title AS BookTitle,
+    CONCAT(b.AuthorFirstName, ' ', b.AuthorLastName) AS AuthorName,
+    l.LoanDate AS LoanDate,
+    u.Login AS UserLogin,
+    DATEDIFF(NOW(), l.LoanDate) AS DaysSinceLoan
+FROM
+    Books b
+JOIN
+    Loans l ON b.BookID = l.BookID
+JOIN
+    Users u ON l.UserID = u.UserID
+WHERE
+    l.Status = 'aktywne' AND l.ReturnDate IS NULL
+ORDER BY
+    DaysSinceLoan DESC;

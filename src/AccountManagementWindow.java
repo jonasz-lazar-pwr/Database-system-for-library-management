@@ -2,91 +2,133 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.sql.*;
-import java.util.Arrays;
 import java.util.Objects;
 
-public class AccountManagementWindow extends JFrame {
-
-    private JTextField usernameTextField;
-    private JPasswordField passwordTextField;
+public class AccountManagementWindow extends JFrame implements FocusListener {
 
     private final String jdbcUrl;
     private final String dbUsername;
     private final String dbPassword;
     private String username;
-    private final UserWindow userWindowReference;
 
-    public AccountManagementWindow(String jdbcUrl, String dbUsername, String dbPassword, String username, UserWindow userWindowReference) {
+    private final int mainR;
+    private final int mainG;
+    private final int mainB;
+
+    private MyTextField usernameField;
+    private MyPasswordField passwordField;
+
+    private JPanel textFieldPanel;
+    private JPanel buttonPanel;
+
+    public AccountManagementWindow(String jdbcUrl, String dbUsername, String dbPassword, String username, int mainR, int mainG, int mainB/*, UserWindow userWindowReference, AdminWindow adminWindowReference*/) {
+
         this.jdbcUrl = jdbcUrl;
         this.dbUsername = dbUsername;
         this.dbPassword = dbPassword;
         this.username = username;
-        this.userWindowReference = userWindowReference;
 
-        setTitle("Zarządzanie kontem");
-        setSize(440, 200);
+        this.mainR = mainR;
+        this.mainG = mainG;
+        this.mainB = mainB;
+
+        initComponents();
+
+        // Ustawienia okna
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setTitle("System obsługi biblioteki - zarządzanie kontem");
+        setSize(500, 500);
+        setLocationRelativeTo(null);
+        setResizable(false);
+        setLayout(null);
+        getContentPane().setBackground(Color.DARK_GRAY);
+        setVisible(true);
+        requestFocusInWindow();
 
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new GridLayout(4, 1));
+        // Dodanie panelu do okna
+        add(textFieldPanel);
+        add(buttonPanel);
+    }
 
-        usernameTextField = new JTextField();
-        passwordTextField = new JPasswordField();
+    private void initComponents() {
 
-        JLabel newUsernameLabel = new JLabel("Nowa nazwa użytkownika");
-        JLabel newPasswordLabel = new JLabel("Nowe hasło");
-        JButton cancelButton = new JButton("Anuluj");
-        JButton confirmButton = new JButton("Potwierdź");
+        textFieldPanel = new JPanel();
+        textFieldPanel.setBounds(145, 100, 200, 100);
+        textFieldPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 10));
+        textFieldPanel.setBackground(Color.LIGHT_GRAY);
+        textFieldPanel.setOpaque(false);
 
-        mainPanel.add(newUsernameLabel);
-        mainPanel.add(usernameTextField);
-        mainPanel.add(newPasswordLabel);
-        mainPanel.add(passwordTextField);
-        mainPanel.add(new JLabel());
-        mainPanel.add(new JLabel());
-        mainPanel.add(cancelButton);
-        mainPanel.add(confirmButton);
+        usernameField = new MyTextField("Nowy login", mainR, mainG, mainB);
+        usernameField.setPreferredSize(new Dimension(200, 35));
+        usernameField.addFocusListener(this);
+        textFieldPanel.add(usernameField);
+
+        passwordField = new MyPasswordField("Nowe hasło", mainR, mainG, mainB);
+        passwordField.setPreferredSize(new Dimension(200, 35));
+        passwordField.addFocusListener(this);
+        textFieldPanel.add(passwordField);
+
+        // Panel z przyciskami
+        buttonPanel = new JPanel();
+        buttonPanel.setBounds(145, 225, 200, 140);
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 10));
+        buttonPanel.setBackground(Color.LIGHT_GRAY);
+        buttonPanel.setOpaque(false);
+
+        MyButton confirmButton = getMyButton();
+        buttonPanel.add(confirmButton);
+
+        MyButton cancelButton = new MyButton("Anuluj", mainR, mainG, mainB);
+
+        cancelButton.addActionListener(e -> {
+            SwingUtilities.invokeLater(() -> new UserWindow(jdbcUrl, dbUsername, dbPassword, username, mainR, mainG, mainB));
+            dispose();
+        });
+        buttonPanel.add(cancelButton);
+    }
+
+    private MyButton getMyButton() {
+
+        MyButton confirmButton = new MyButton("Potwierdź", mainR, mainG, mainB);
 
         confirmButton.addActionListener(e -> {
-            String newUsername = usernameTextField.getText();
-            String newPassword = new String(passwordTextField.getPassword());
+
+            String newUsername = usernameField.getText();
+            String newPassword = new String(passwordField.getPassword());
 
             if (doesUserExist(newUsername)) {
                 JOptionPane.showMessageDialog(AccountManagementWindow.this, "Użytkownik o takiej nazwie już istnieje!", "Błąd", JOptionPane.ERROR_MESSAGE);
             } else {
+
                 String password = JOptionPane.showInputDialog("Podaj hasło do potwierdzenia zmian");
 
                 if (password != null && !password.isEmpty() && checkUserPassword(username, password)) {
-                    if (!newUsername.isEmpty()) {
+
+                    if (!newUsername.isEmpty() && !newUsername.equals(username)) {
+
                         updateUsername(username, newUsername);
                         setUsername(newUsername);
-                        userWindowReference.setUsername(newUsername);
-                        // JOptionPane.showMessageDialog(AccountManagementWindow.this, "Zmieniono nazwę użytkownika", "Informacja", JOptionPane.INFORMATION_MESSAGE);
                     }
 
                     if (!newPassword.isEmpty()) {
                         updatePassword(newUsername, newPassword);
-                        // JOptionPane.showMessageDialog(AccountManagementWindow.this, "Zmieniono hasło", "Informacja", JOptionPane.INFORMATION_MESSAGE);
                     }
 
                     dispose();
-                } else{
+                    SwingUtilities.invokeLater(() -> new UserWindow(jdbcUrl, dbUsername, dbPassword, this.username, mainR, mainG, mainB));
+
+                } else {
                     JOptionPane.showMessageDialog(AccountManagementWindow.this, "Wprowadzono niepoprawne hasło.", "Błąd", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
 
-        cancelButton.addActionListener(e -> dispose());
-
-        mainPanel.setFocusable(true);
-        mainPanel.requestFocusInWindow();
-
-        add(mainPanel);
-        setLocationRelativeTo(null);
-        setVisible(true);
+        return confirmButton;
     }
 
     private boolean doesUserExist(String username) {
@@ -152,7 +194,7 @@ public class AccountManagementWindow extends JFrame {
                         }
                     }
                 } else {
-                    System.out.println("Nie znaleziono użytkownika.");
+                    System.out.println("Nie znaleziono użytkownika." + username);
                     resultSet.close();
                 }
             }
@@ -166,7 +208,6 @@ public class AccountManagementWindow extends JFrame {
         try {
             Connection connection = DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword);
 
-            // PreparedStatement, by uniknąć ataków SQL Injection
             String updateQuery = "UPDATE Users SET Login = ? WHERE Login = ?";
 
             try (PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
@@ -210,8 +251,39 @@ public class AccountManagementWindow extends JFrame {
         }
     }
 
-    private void setUsername(String username){
+    public void setUsername(String username){
         this.username = username;
     }
 
+    @Override
+    public void focusGained(FocusEvent e) {
+        if (e.getSource() == usernameField) {
+            if (usernameField.getText().equals("Nowy login")) {
+                usernameField.setText("");
+            }
+        } else if (e.getSource() == passwordField) {
+            String passwordText = new String(passwordField.getPassword());
+
+            if (passwordText.equals("Nowe hasło")) {
+                passwordField.setEchoChar('\u2022');
+                passwordField.setText("");
+            }
+        }
+    }
+
+    @Override
+    public void focusLost(FocusEvent e) {
+        if (e.getSource() == usernameField) {
+            if (usernameField.getText().isEmpty()) {
+                usernameField.setText("Nowy login");
+            }
+        } else if (e.getSource() == passwordField) {
+            String passwordText = new String(passwordField.getPassword());
+
+            if (passwordText.isEmpty()) {
+                passwordField.setEchoChar((char) 0);
+                passwordField.setText("Nowe hasło");
+            }
+        }
+    }
 }

@@ -11,11 +11,9 @@ public class MyButton extends JButton {
         this.setHorizontalTextPosition(0);
         this.setVerticalTextPosition(0);
         this.setFont(new Font("Roboto", Font.BOLD, 16));
-//        this.setForeground(Color.LIGHT_GRAY);
-//        this.setBackground(Color.DARK_GRAY);
         this.setForeground(Color.LIGHT_GRAY);
         this.setBackground(new Color(mainR, mainG, mainB));
         this.setOpaque(true);
-        this.setBorder(new LineBorder(new Color(mainR, mainG, mainB)));
+        this.setBorder(new LineBorder(Color.GRAY));
     }
 }

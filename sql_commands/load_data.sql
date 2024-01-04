@@ -37,7 +37,22 @@ VALUES
     ('Ania z Zielonego Wzgórza', 'Montgomery', 'Lucy Maud', 'Wydawnictwo Ameet', 2018, '9788381517854', 'dostępna'),
     ('Duma i Uprzedzenie', 'Austen', 'Jane', 'Zielona Sowa', 2013, '9788362447170', 'dostępna'),
     ('Dracula', 'Stoker', 'Bram', 'Prószyński i S-ka', 2003, '9788373270801', 'dostępna'),
-    ('1984', 'Orwell', 'George', 'Dom Wydawniczy REBIS', 2018, '9788389141418', 'dostępna');
+    ('1984', 'Orwell', 'George', 'Dom Wydawniczy REBIS', 2018, '9788389141418', 'dostępna'),
+    ('Sklepik z Marzeniami', 'King', 'Stephen', 'Albatros', 2015, '9788378889313', 'dostępna'),
+    ('Winnica Na Dolinie', 'Michener', 'James A.', 'Amber', 2011, '9788324169767', 'dostępna'),
+    ('Dziewczyna z Tatuażem', 'Larsson', 'Stieg', 'Wydawnictwo Dolnośląskie', 2009, '9788375853971', 'dostępna'),
+    ('Małe Kobietki', 'Alcott', 'Louisa May', 'Zysk i S-ka', 2016, '9788375061433', 'dostępna'),
+    ('Wilk z Wall Street', 'Belfort', 'Jordan', 'Amber', 2014, '9788378883885', 'dostępna'),
+    ('Marsjanin', 'Weir', 'Andy', 'Insignis Media', 2015, '9788379136302', 'dostępna'),
+    ('Podróż Słodkiego Dzidziusia', 'Murkoff', 'Heidi', 'Wydawnictwo Literackie', 2020, '9788300050319', 'dostępna'),
+    ('Kod Leonarda da Vinci', 'Brown', 'Dan', 'Albatros', 2004, '9788378882499', 'dostępna'),
+    ('Wodogrzmoty Male', 'Nesbo', 'Jo', 'Wydawnictwo Dolnośląskie', 2019, '9788327177166', 'dostępna'),
+    ('Rzeka Twarzy', 'Mithen', 'Steven', 'Amber', 2012, '9788375088560', 'dostępna'),
+    ('Niebezpieczne Związki', 'Laclos', 'Pierre Choderlos de', 'Wydawnictwo M', 2014, '9788378395691', 'dostępna'),
+    ('Moc', 'Rhonda Byrne', '', 'Świat Książki', 2007, '9788375540169', 'dostępna'),
+    ('Martwe Dusze', 'Gogol', 'Nikolaj', 'Wydawnictwo Literackie', 2016, '9788379273979', 'dostępna'),
+    ('Tragedia Człowieka', 'Krasicki', 'Ignacy', 'Zysk i S-ka', 2010, '9788375061518', 'dostępna'),
+    ('Pensjonat Pod Różą', 'Baum', 'L. Frank', 'Greg', 2008, '9788375150207', 'dostępna');
 
 
 -- Insert sample loans into the "Loans" table

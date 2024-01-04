@@ -143,6 +143,7 @@ public class RegisterWindow extends JFrame implements FocusListener, ActionListe
                     System.out.println(rowsAdded + " wiersz(y) dodano.");
 
                     JOptionPane.showMessageDialog(RegisterWindow.this, "Zarejestrowano użytkownika, teraz możesz się zalogować", "Koniec rejestracji", JOptionPane.INFORMATION_MESSAGE);
+                    SwingUtilities.invokeLater(() -> new LoginWindow(jdbcUrl, dbUsername, dbPassword, mainR, mainG, mainB));
                     dispose();
                 }
             } catch (Exception ex) {

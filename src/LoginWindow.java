@@ -8,6 +8,7 @@ import java.sql.*;
 import java.sql.Connection;
 import java.util.Objects;
 
+
 public class LoginWindow extends JFrame implements FocusListener {
 
     private final String jdbcUrl;
@@ -87,9 +88,10 @@ public class LoginWindow extends JFrame implements FocusListener {
         MyButton registerButton = new MyButton("Zarejestruj się", mainR, mainG, mainB);
 
         registerButton.addActionListener(e -> {
-            dispose();
             SwingUtilities.invokeLater(() -> new RegisterWindow(jdbcUrl, dbUsername, dbPassword));
+            dispose();
         });
+
         buttonPanel.add(registerButton);
     }
 
@@ -109,15 +111,19 @@ public class LoginWindow extends JFrame implements FocusListener {
                 int check = checkUserPassword(username, password);
                 if (check==1){
                     System.out.println("Zalogowano jako czytelnik");
-                    dispose();
-                    SwingUtilities.invokeLater(() -> {
+                    /*SwingUtilities.invokeLater(() -> {
                         UserWindow userWindow = new UserWindow(jdbcUrl, dbUsername, dbPassword, username);
                     });
+*/
+                    SwingUtilities.invokeLater(() -> new UserWindow(jdbcUrl, dbUsername, dbPassword, username, mainR, mainG, mainB));
                     dispose();
+
                 } else if (check == 2) {
                     System.out.println("Zalogowano jako bibliotekarz");
-                    dispose();
-                    SwingUtilities.invokeLater(AdminWindow::new);
+
+                    SwingUtilities.invokeLater(() -> {
+                        AdminWindow adminWindow = new AdminWindow(jdbcUrl, dbUsername, dbPassword, username);
+                    });
                     dispose();
                 } else {
                     JOptionPane.showMessageDialog(LoginWindow.this,
