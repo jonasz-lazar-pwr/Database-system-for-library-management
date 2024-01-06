@@ -1,0 +1,192 @@
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.sql.*;
+import java.util.ArrayList;
+
+public class RentalsManagementWindow extends JFrame {
+
+    private final String jdbcUrl;
+    private final String dbUsername;
+    private final String dbPassword;
+    private final String username;
+
+    private final int mainR;
+    private final int mainG;
+    private final int mainB;
+
+    private JPanel panel;
+    private JTable loansTable;
+
+    public RentalsManagementWindow(String jdbcUrl, String dbUsername, String dbPassword, String username, int mainR, int mainG, int mainB) {
+
+        this.jdbcUrl = jdbcUrl;
+        this.dbUsername = dbUsername;
+        this.dbPassword = dbPassword;
+        this.username = username;
+
+        this.mainR = mainR;
+        this.mainG = mainG;
+        this.mainB = mainB;
+
+        initComponents();
+
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setTitle("System obsługi biblioteki - zarządzanie wypożyczeniami");
+        setSize(700, 500);
+        setLocationRelativeTo(null);
+        setResizable(false);
+        getContentPane().setBackground(Color.DARK_GRAY);
+        setVisible(true);
+        requestFocusInWindow();
+
+        add(panel);
+    }
+
+    private void initComponents() {
+
+        panel = new JPanel(new BorderLayout());
+        panel.setBackground(Color.LIGHT_GRAY);
+        panel.setOpaque(false);
+
+        JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        buttonsPanel.setBackground(Color.LIGHT_GRAY);
+        buttonsPanel.setOpaque(false);
+
+        MyButton returnBookButton = new MyButton("Zwróć książkę", mainR, mainG, mainB);
+        returnBookButton.setPreferredSize(new Dimension(150, 45));
+
+        returnBookButton.addActionListener(e -> {
+            returnBook();
+        });
+
+        MyButton menuReturnButton = new MyButton("Powrót", mainR, mainG, mainB);
+        menuReturnButton.setPreferredSize(new Dimension(150, 45));
+
+        menuReturnButton.addActionListener(e -> {
+            SwingUtilities.invokeLater(() -> new AdminWindow(jdbcUrl, dbUsername, dbPassword, username, mainR, mainG, mainB));
+            dispose();
+        });
+
+        buttonsPanel.add(menuReturnButton);
+        buttonsPanel.add(returnBookButton);
+        panel.add(buttonsPanel, BorderLayout.SOUTH);
+
+        initializeLoansTable();
+
+        JScrollPane scrollPane = new JScrollPane(loansTable);
+        scrollPane.setForeground(Color.LIGHT_GRAY);
+        scrollPane.setBackground(Color.LIGHT_GRAY);
+        scrollPane.setBorder(new LineBorder(Color.DARK_GRAY));
+        scrollPane.getViewport().setBackground(Color.DARK_GRAY);
+
+        panel.add(scrollPane, BorderLayout.CENTER);
+
+    }
+
+    private void initializeLoansTable() {
+        ArrayList<String[]> tableData = fetchDataFromDatabaseLoans();
+
+        String[] columnNames = {"Id wypożyczenia", "Czytelnik", "Tytuł książki", "Data wypożyczenia", "Status"};
+
+        DefaultTableModel model = new DefaultTableModel(tableData.toArray(new Object[0][0]), columnNames) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        loansTable = new JTable(model);
+        loansTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        loansTable.setFont(new Font("Roboto", Font.PLAIN, 15));
+        loansTable.setRowHeight(20);
+        loansTable.setForeground(Color.DARK_GRAY);
+        loansTable.setBackground(Color.LIGHT_GRAY);
+        loansTable.setBorder(new LineBorder(Color.LIGHT_GRAY));
+
+        loansTable.getTableHeader().setReorderingAllowed(false);
+        loansTable.getTableHeader().setFont(new Font("Roboto", Font.PLAIN, 15));
+        loansTable.getTableHeader().setForeground(Color.DARK_GRAY);
+        loansTable.getTableHeader().setBackground(Color.LIGHT_GRAY);
+        loansTable.getTableHeader().setBorder(new LineBorder(Color.GRAY));
+    }
+
+    private ArrayList<String[]> fetchDataFromDatabaseLoans(){
+        ArrayList<String[]> data = new ArrayList<>();
+
+        try (Connection connection = DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword)) {
+            String query = "SELECT loan_id, login, title, loan_date, status FROM UserLoansView";
+            try (PreparedStatement statement = connection.prepareStatement(query);
+                 ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()){
+                    String loanId = resultSet.getString("loan_id");
+                    String username = resultSet.getString("login");
+                    String bookTitle = resultSet.getString("title");
+                    String loanDate = resultSet.getString("loan_date");
+                    String status = resultSet.getString("status");
+                    data.add(new String[]{loanId, username, bookTitle, loanDate, status});
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return data;
+    }
+
+    private int returnBook() {
+        int selectedRow = loansTable.getSelectedRow();
+
+        if (selectedRow != -1) {
+            String loanID = (String) loansTable.getValueAt(selectedRow, 0);
+
+            try (Connection connection = DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword)) {
+                String updateLoanQuery = "UPDATE Loans SET ReturnDate = CURRENT_DATE, Status = 'zrealizowane' WHERE LoanID = ?";
+                String updateBookQuery = "UPDATE Books SET BookAvailability = 'dostępna' WHERE BookID = (SELECT BookID FROM Loans WHERE LoanID = ?)";
+
+                try (PreparedStatement updateLoanStatement = connection.prepareStatement(updateLoanQuery);
+                     PreparedStatement updateBookStatement = connection.prepareStatement(updateBookQuery)) {
+
+                    connection.setAutoCommit(false);
+
+                    updateLoanStatement.setString(1, loanID);
+                    updateLoanStatement.executeUpdate();
+
+                    updateBookStatement.setString(1, loanID);
+                    updateBookStatement.executeUpdate();
+
+                    connection.commit();
+
+                    String message = "Zwrócono książkę o ID: " + loanID;
+                    JOptionPane.showMessageDialog(this, message, "Potwierdzenie zwrotu", JOptionPane.INFORMATION_MESSAGE);
+                    updateLoansTable();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    connection.rollback();
+                    JOptionPane.showMessageDialog(this, "Błąd podczas zwracania książki.", "Błąd", JOptionPane.ERROR_MESSAGE);
+                } finally {
+                    connection.setAutoCommit(true);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Błąd podczas łączenia z bazą danych.", "Błąd", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Wybierz wypożyczenie, które chcesz zwrócić.", "Błąd", JOptionPane.ERROR_MESSAGE);
+        }
+
+        return 0;
+    }
+
+    private void updateLoansTable() {
+        ArrayList<String[]> tableData = fetchDataFromDatabaseLoans();
+
+        DefaultTableModel model = (DefaultTableModel) loansTable.getModel();
+        model.setRowCount(0);
+
+        for (String[] rowData : tableData) {
+            model.addRow(rowData);
+        }
+    }
+}

@@ -1,7 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 
-
 public class UserWindow extends JFrame {
 
     private final String jdbcUrl;
@@ -78,7 +77,8 @@ public class UserWindow extends JFrame {
         MyButton rentalHistoryButton = new MyButton("Moje wypożyczenia", mainR, mainG, mainB);
 
         rentalHistoryButton.addActionListener(e -> {
-            new HistoryViewWindow(jdbcUrl, dbUsername, dbPassword, username);
+            SwingUtilities.invokeLater(() -> new HistoryViewWindow(jdbcUrl, dbUsername, dbPassword, username, mainR, mainG, mainB));
+            dispose();
         });
 
         MyButton logoutButton = new MyButton("Wyloguj się", mainR, mainG, mainB);

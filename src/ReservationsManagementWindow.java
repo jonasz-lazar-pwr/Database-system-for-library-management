@@ -1,5 +1,4 @@
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -39,7 +38,6 @@ public class ReservationsManagementWindow extends JFrame {
         setSize(500, 500);
         setLocationRelativeTo(null);
         setResizable(false);
-        //setLayout(null);
         getContentPane().setBackground(Color.DARK_GRAY);
         setVisible(true);
         requestFocusInWindow();

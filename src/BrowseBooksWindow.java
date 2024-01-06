@@ -7,7 +7,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Objects;
 
-
 public class BrowseBooksWindow extends JFrame {
 
     private final String jdbcUrl;

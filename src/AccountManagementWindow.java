@@ -1,7 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.math.BigInteger;
@@ -86,9 +84,15 @@ public class AccountManagementWindow extends JFrame implements FocusListener {
         MyButton cancelButton = new MyButton("Anuluj", mainR, mainG, mainB);
 
         cancelButton.addActionListener(e -> {
-            SwingUtilities.invokeLater(() -> new UserWindow(jdbcUrl, dbUsername, dbPassword, username, mainR, mainG, mainB));
-            dispose();
+            if (Objects.equals(getUserRole(username), "czytelnik")) {
+                SwingUtilities.invokeLater(() -> new UserWindow(jdbcUrl, dbUsername, dbPassword, username, mainR, mainG, mainB));
+                dispose();
+            } else if (Objects.equals(getUserRole(username), "bibliotekarz")) {
+                SwingUtilities.invokeLater(() -> new AdminWindow(jdbcUrl, dbUsername, dbPassword, username, mainR, mainG, mainB));
+                dispose();
+            }
         });
+
         buttonPanel.add(cancelButton);
     }
 
@@ -107,9 +111,9 @@ public class AccountManagementWindow extends JFrame implements FocusListener {
 
                 String password = JOptionPane.showInputDialog("Podaj hasło do potwierdzenia zmian");
 
-                if (password != null && !password.isEmpty() && checkUserPassword(username, password)) {
+                if (password != null && !password.isEmpty() && !password.equals("Nowe hasło") && checkUserPassword(username, password)) {
 
-                    if (!newUsername.isEmpty() && !newUsername.equals(username)) {
+                    if (!newUsername.isEmpty() && !newUsername.equals(username) && !newUsername.equals("Nowy login")) {
 
                         updateUsername(username, newUsername);
                         setUsername(newUsername);
@@ -119,8 +123,15 @@ public class AccountManagementWindow extends JFrame implements FocusListener {
                         updatePassword(newUsername, newPassword);
                     }
 
-                    dispose();
-                    SwingUtilities.invokeLater(() -> new UserWindow(jdbcUrl, dbUsername, dbPassword, this.username, mainR, mainG, mainB));
+                    if (Objects.equals(getUserRole(username), "czytelnik")) {
+                        SwingUtilities.invokeLater(() -> new UserWindow(jdbcUrl, dbUsername, dbPassword, username, mainR, mainG, mainB));
+                        dispose();
+                    }
+
+                    if (Objects.equals(getUserRole(username), "bibliotekarz")) {
+                        SwingUtilities.invokeLater(() -> new AdminWindow(jdbcUrl, dbUsername, dbPassword, username, mainR, mainG, mainB));
+                        dispose();
+                    }
 
                 } else {
                     JOptionPane.showMessageDialog(AccountManagementWindow.this, "Wprowadzono niepoprawne hasło.", "Błąd", JOptionPane.ERROR_MESSAGE);
@@ -202,6 +213,24 @@ public class AccountManagementWindow extends JFrame implements FocusListener {
             e.printStackTrace();
         }
         return false;
+    }
+
+    // Metoda do sprawdzania roli użytkownika
+    public String getUserRole(String username) {
+        try (Connection connection = DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword)) {
+            String query = "SELECT UserRole FROM Users WHERE Login = ?";
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setString(1, username);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        return resultSet.getString("UserRole");
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null; // Zwracanie null w przypadku błędu lub braku informacji
     }
 
     private void updateUsername(String username, String newUsername) {
