@@ -70,68 +70,85 @@ public class AccountManagementWindow extends JFrame implements FocusListener {
         buttonPanel.setBackground(Color.LIGHT_GRAY);
         buttonPanel.setOpaque(false);
 
-        MyButton confirmButton = getMyButton();
+        MyButton confirmButton = new MyButton("Potwierdź");
+
+        confirmButton.addActionListener(e -> handleConfirmButton());
         buttonPanel.add(confirmButton);
 
         MyButton cancelButton = new MyButton("Anuluj");
 
-        cancelButton.addActionListener(e -> {
-            if (Objects.equals(getUserRole(username), "czytelnik")) {
-                SwingUtilities.invokeLater(() -> new UserWindow(jdbcUrl, dbUsername, dbPassword, username));
-                dispose();
-            } else if (Objects.equals(getUserRole(username), "bibliotekarz")) {
-                SwingUtilities.invokeLater(() -> new AdminWindow(jdbcUrl, dbUsername, dbPassword, username));
-                dispose();
-            }
-        });
-
+        cancelButton.addActionListener(e -> handleCancelButton());
         buttonPanel.add(cancelButton);
+
     }
 
-    private MyButton getMyButton() {
+    private void handleConfirmButton() {
+        String newUsername = usernameField.getText();
+        String newPassword = new String(passwordField.getPassword());
 
-        MyButton confirmButton = new MyButton("Potwierdź");
+        boolean isDefaultUsername = newUsername.equals("Nowy login");
+        boolean isDefaultPassword = newPassword.equals("Nowe hasło");
 
-        confirmButton.addActionListener(e -> {
+        if (isDefaultUsername && isDefaultPassword) {
+            JOptionPane.showMessageDialog(this, "Wprowadź poprawne dane.", "Błąd", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-            String newUsername = usernameField.getText();
-            String newPassword = new String(passwordField.getPassword());
+        if (!isDefaultUsername && doesUserExist(newUsername)) {
+            JOptionPane.showMessageDialog(this, "Użytkownik o takiej nazwie już istnieje!", "Błąd", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-            if (doesUserExist(newUsername)) {
-                JOptionPane.showMessageDialog(AccountManagementWindow.this, "Użytkownik o takiej nazwie już istnieje!", "Błąd", JOptionPane.ERROR_MESSAGE);
-            } else {
+        String password = getPasswordForConfirmation();
 
-                String password = JOptionPane.showInputDialog("Podaj hasło do potwierdzenia zmian");
+        if (password != null && checkUserPassword(username, password)) {
+            if (!isDefaultUsername) {
+                updateUsername(username, newUsername);
+                setUsername(newUsername);
+            }
 
-                if (password != null && !password.isEmpty() && !password.equals("Nowe hasło") && checkUserPassword(username, password)) {
+            // Sprawdzamy, czy hasło zostało zmienione
+            if (!isDefaultPassword) {
+                // Tutaj dokonujemy aktualizacji hasła i sprawdzamy, czy operacja się powiodła
+                boolean passwordUpdated = updatePassword(newUsername, newPassword);
 
-                    if (!newUsername.isEmpty() && !newUsername.equals(username) && !newUsername.equals("Nowy login")) {
-
-                        updateUsername(username, newUsername);
-                        setUsername(newUsername);
-                    }
-
-                    if (!newPassword.isEmpty()) {
-                        updatePassword(newUsername, newPassword);
-                    }
-
-                    if (Objects.equals(getUserRole(username), "czytelnik")) {
-                        SwingUtilities.invokeLater(() -> new UserWindow(jdbcUrl, dbUsername, dbPassword, username));
-                        dispose();
-                    }
-
-                    if (Objects.equals(getUserRole(username), "bibliotekarz")) {
-                        SwingUtilities.invokeLater(() -> new AdminWindow(jdbcUrl, dbUsername, dbPassword, username));
-                        dispose();
-                    }
-
+                // Jeśli hasło zostało zmienione poprawnie
+                if (passwordUpdated) {
+                    JOptionPane.showMessageDialog(this, "Zmieniono hasło.", "Informacja", JOptionPane.INFORMATION_MESSAGE);
                 } else {
-                    JOptionPane.showMessageDialog(AccountManagementWindow.this, "Wprowadzono niepoprawne hasło.", "Błąd", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Nie udało się zmienić hasła.", "Błąd", JOptionPane.ERROR_MESSAGE);
                 }
             }
-        });
 
-        return confirmButton;
+            navigateToNextWindow();
+
+        } else {
+            JOptionPane.showMessageDialog(this, "Wprowadzono niepoprawne hasło.", "Błąd", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void handleCancelButton() {
+        if (Objects.equals(getUserRole(username), "czytelnik")) {
+            SwingUtilities.invokeLater(() -> new UserWindow(jdbcUrl, dbUsername, dbPassword, username));
+            dispose();
+        } else if (Objects.equals(getUserRole(username), "bibliotekarz")) {
+            SwingUtilities.invokeLater(() -> new AdminWindow(jdbcUrl, dbUsername, dbPassword, username));
+            dispose();
+        }
+    }
+
+    private String getPasswordForConfirmation() {
+        return JOptionPane.showInputDialog(this, "Podaj hasło do potwierdzenia zmian");
+    }
+
+    private void navigateToNextWindow() {
+        if (Objects.equals(getUserRole(username), "czytelnik")) {
+            SwingUtilities.invokeLater(() -> new UserWindow(jdbcUrl, dbUsername, dbPassword, username));
+            dispose();
+        } else if (Objects.equals(getUserRole(username), "bibliotekarz")) {
+            SwingUtilities.invokeLater(() -> new AdminWindow(jdbcUrl, dbUsername, dbPassword, username));
+            dispose();
+        }
     }
 
     private boolean doesUserExist(String username) {
@@ -145,8 +162,6 @@ public class AccountManagementWindow extends JFrame implements FocusListener {
                         return userCount > 0;
                     }
                 }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -171,37 +186,28 @@ public class AccountManagementWindow extends JFrame implements FocusListener {
     }
 
     private boolean checkUserPassword(String username, String password) {
-        try {
-            Connection connection = DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword);
-
+        try (Connection connection = DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword)) {
             String query = "SELECT UserPassword, UserRole FROM Users WHERE Login = ?";
-
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setString(1, username);
 
                 // Wykonaj zapytanie
-                ResultSet resultSet = preparedStatement.executeQuery();
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    // Sprawdź, czy znaleziono użytkownika
+                    if (resultSet.next()) {
+                        String storedPassword = resultSet.getString("UserPassword");
+                        String role = resultSet.getString("UserRole");
 
-                // Sprawdź, czy znaleziono użytkownika
-                if (resultSet.next()) {
-                    String storedPassword = resultSet.getString("UserPassword");
-                    String role = resultSet.getString("UserRole");
-
-                    resultSet.close();
-
-                    if (passwordsMatch(password, storedPassword)) {
-                        if (Objects.equals(role, "czytelnik")) {
-                            return true;
-                        } else if (Objects.equals(role, "bibliotekarz")) {
+                        // Sprawdź, czy hasła się zgadzają
+                        if (passwordsMatch(password, storedPassword)) {
                             return true;
                         }
+                    } else {
+                        System.out.println("Nie znaleziono użytkownika." + username);
                     }
-                } else {
-                    System.out.println("Nie znaleziono użytkownika." + username);
-                    resultSet.close();
                 }
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
@@ -226,16 +232,12 @@ public class AccountManagementWindow extends JFrame implements FocusListener {
     }
 
     private void updateUsername(String username, String newUsername) {
-        try {
-            Connection connection = DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword);
-
+        try (Connection connection = DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword)) {
             String updateQuery = "UPDATE Users SET Login = ? WHERE Login = ?";
-
             try (PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
                 preparedStatement.setString(1, newUsername);
                 preparedStatement.setString(2, username);
 
-                // Wykonaj zapytanie
                 int rowsAffected = preparedStatement.executeUpdate();
 
                 if (rowsAffected > 0) {
@@ -244,32 +246,28 @@ public class AccountManagementWindow extends JFrame implements FocusListener {
                     JOptionPane.showMessageDialog(AccountManagementWindow.this, "Nie udało się zmienić nazwy użytkownika.", "Błąd", JOptionPane.ERROR_MESSAGE);
                 }
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    private void updatePassword(String username, String newPassword) {
-        try {
-            Connection connection = DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword);
-
+    private boolean updatePassword(String username, String newPassword) {
+        try (Connection connection = DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword)) {
             String updateQuery = "UPDATE Users SET UserPassword = MD5(?) WHERE Login = ?";
 
             try (PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
                 preparedStatement.setString(1, newPassword);
                 preparedStatement.setString(2, username);
 
+                // Wykonaj zapytanie
                 int rowsAffected = preparedStatement.executeUpdate();
 
-                if (rowsAffected > 0) {
-                    JOptionPane.showMessageDialog(AccountManagementWindow.this, "Zmieniono hasło.", "Informacja", JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    JOptionPane.showMessageDialog(AccountManagementWindow.this, "Nie udało się zmienić hasła.", "Błąd", JOptionPane.ERROR_MESSAGE);
-                }
+                return rowsAffected > 0;
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
     public void setUsername(String username){
