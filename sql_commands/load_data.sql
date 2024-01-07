@@ -25,34 +25,34 @@ VALUES
 
 
 -- Insert sample books into the "Books" table
-INSERT INTO Books (Title, AuthorLastName, AuthorFirstName, Publisher, PublicationYear, ISBN, BookAvailability)
+INSERT INTO Books (Title, AuthorLastName, AuthorFirstName, Publisher, PublicationYear, ISBN, BookAvailability, Amount)
 VALUES
-    ('Władca Pierścieni: Drużyna Pierścienia', 'Tolkien', 'J.R.R.', 'Wydawnictwo Literackie', 2001, '9788373191723', 'dostępna'),
-    ('Harry Potter i Kamień Filozoficzny', 'Rowling', 'J.K.', 'Media Rodzina', 1999, '9788372780331', 'dostępna'),
-    ('Zbrodnia i Kara', 'Dostojewski', 'Fiodor', 'Czytelnik', 2010, '9788307026319', 'dostępna'),
-    ('Wiedźmin: Ostatnie Życzenie', 'Sapkowski', 'Andrzej', 'SuperNOWA', 2008, '9788375542019', 'dostępna'),
-    ('To', 'King', 'Stephen', 'Albatros', 2018, '9788328014584', 'dostępna'),
-    ('Hobbit, czyli Tam i Z Powrotem', 'Tolkien', 'J.R.R.', 'Wydawnictwo Literackie', 2003, '9788373191044', 'dostępna'),
-    ('Mistrz i Małgorzata', 'Bułhakow', 'Michaił', 'Iskry', 2001, '9788320710048', 'dostępna'),
-    ('Ania z Zielonego Wzgórza', 'Montgomery', 'Lucy Maud', 'Wydawnictwo Ameet', 2018, '9788381517854', 'dostępna'),
-    ('Duma i Uprzedzenie', 'Austen', 'Jane', 'Zielona Sowa', 2013, '9788362447170', 'dostępna'),
-    ('Dracula', 'Stoker', 'Bram', 'Prószyński i S-ka', 2003, '9788373270801', 'dostępna'),
-    ('1984', 'Orwell', 'George', 'Dom Wydawniczy REBIS', 2018, '9788389141418', 'dostępna'),
-    ('Sklepik z Marzeniami', 'King', 'Stephen', 'Albatros', 2015, '9788378889313', 'dostępna'),
-    ('Winnica Na Dolinie', 'Michener', 'James A.', 'Amber', 2011, '9788324169767', 'dostępna'),
-    ('Dziewczyna z Tatuażem', 'Larsson', 'Stieg', 'Wydawnictwo Dolnośląskie', 2009, '9788375853971', 'dostępna'),
-    ('Małe Kobietki', 'Alcott', 'Louisa May', 'Zysk i S-ka', 2016, '9788375061433', 'dostępna'),
-    ('Wilk z Wall Street', 'Belfort', 'Jordan', 'Amber', 2014, '9788378883885', 'dostępna'),
-    ('Marsjanin', 'Weir', 'Andy', 'Insignis Media', 2015, '9788379136302', 'dostępna'),
-    ('Podróż Słodkiego Dzidziusia', 'Murkoff', 'Heidi', 'Wydawnictwo Literackie', 2020, '9788300050319', 'dostępna'),
-    ('Kod Leonarda da Vinci', 'Brown', 'Dan', 'Albatros', 2004, '9788378882499', 'dostępna'),
-    ('Wodogrzmoty Male', 'Nesbo', 'Jo', 'Wydawnictwo Dolnośląskie', 2019, '9788327177166', 'dostępna'),
-    ('Rzeka Twarzy', 'Mithen', 'Steven', 'Amber', 2012, '9788375088560', 'dostępna'),
-    ('Niebezpieczne Związki', 'Laclos', 'Pierre Choderlos de', 'Wydawnictwo M', 2014, '9788378395691', 'dostępna'),
-    ('Moc', 'Rhonda Byrne', '', 'Świat Książki', 2007, '9788375540169', 'dostępna'),
-    ('Martwe Dusze', 'Gogol', 'Nikolaj', 'Wydawnictwo Literackie', 2016, '9788379273979', 'dostępna'),
-    ('Tragedia Człowieka', 'Krasicki', 'Ignacy', 'Zysk i S-ka', 2010, '9788375061518', 'dostępna'),
-    ('Pensjonat Pod Różą', 'Baum', 'L. Frank', 'Greg', 2008, '9788375150207', 'dostępna');
+    ('Władca Pierścieni: Drużyna Pierścienia', 'Tolkien', 'J.R.R.', 'Wydawnictwo Literackie', 2001, '9788373191723', 'dostępna', 10),
+    ('Harry Potter i Kamień Filozoficzny', 'Rowling', 'J.K.', 'Media Rodzina', 1999, '9788372780331', 'dostępna', 10),
+    ('Zbrodnia i Kara', 'Dostojewski', 'Fiodor', 'Czytelnik', 2010, '9788307026319', 'dostępna', 10),
+    ('Wiedźmin: Ostatnie Życzenie', 'Sapkowski', 'Andrzej', 'SuperNOWA', 2008, '9788375542019', 'dostępna', 10),
+    ('To', 'King', 'Stephen', 'Albatros', 2018, '9788328014584', 'dostępna', 10),
+    ('Hobbit, czyli Tam i Z Powrotem', 'Tolkien', 'J.R.R.', 'Wydawnictwo Literackie', 2003, '9788373191044', 'dostępna', 10),
+    ('Mistrz i Małgorzata', 'Bułhakow', 'Michaił', 'Iskry', 2001, '9788320710048', 'dostępna', 10),
+    ('Ania z Zielonego Wzgórza', 'Montgomery', 'Lucy Maud', 'Wydawnictwo Ameet', 2018, '9788381517854', 'dostępna', 10),
+    ('Duma i Uprzedzenie', 'Austen', 'Jane', 'Zielona Sowa', 2013, '9788362447170', 'dostępna', 10),
+    ('Dracula', 'Stoker', 'Bram', 'Prószyński i S-ka', 2003, '9788373270801', 'dostępna', 10),
+    ('1984', 'Orwell', 'George', 'Dom Wydawniczy REBIS', 2018, '9788389141418', 'dostępna', 10),
+    ('Sklepik z Marzeniami', 'King', 'Stephen', 'Albatros', 2015, '9788378889313', 'dostępna', 10),
+    ('Winnica Na Dolinie', 'Michener', 'James A.', 'Amber', 2011, '9788324169767', 'dostępna', 10),
+    ('Dziewczyna z Tatuażem', 'Larsson', 'Stieg', 'Wydawnictwo Dolnośląskie', 2009, '9788375853971', 'dostępna', 10),
+    ('Małe Kobietki', 'Alcott', 'Louisa May', 'Zysk i S-ka', 2016, '9788375061433', 'dostępna', 10),
+    ('Wilk z Wall Street', 'Belfort', 'Jordan', 'Amber', 2014, '9788378883885', 'dostępna', 10),
+    ('Marsjanin', 'Weir', 'Andy', 'Insignis Media', 2015, '9788379136302', 'dostępna', 10),
+    ('Podróż Słodkiego Dzidziusia', 'Murkoff', 'Heidi', 'Wydawnictwo Literackie', 2020, '9788300050319', 'dostępna', 10),
+    ('Kod Leonarda da Vinci', 'Brown', 'Dan', 'Albatros', 2004, '9788378882499', 'dostępna', 10),
+    ('Wodogrzmoty Male', 'Nesbo', 'Jo', 'Wydawnictwo Dolnośląskie', 2019, '9788327177166', 'dostępna', 10),
+    ('Rzeka Twarzy', 'Mithen', 'Steven', 'Amber', 2012, '9788375088560', 'dostępna', 10),
+    ('Niebezpieczne Związki', 'Laclos', 'Pierre Choderlos de', 'Wydawnictwo M', 2014, '9788378395691', 'dostępna', 10),
+    ('Moc', 'Rhonda Byrne', '', 'Świat Książki', 2007, '9788375540169', 'dostępna', 10),
+    ('Martwe Dusze', 'Gogol', 'Nikolaj', 'Wydawnictwo Literackie', 2016, '9788379273979', 'dostępna', 10),
+    ('Tragedia Człowieka', 'Krasicki', 'Ignacy', 'Zysk i S-ka', 2010, '9788375061518', 'dostępna', 10),
+    ('Pensjonat Pod Różą', 'Baum', 'L. Frank', 'Greg', 2008, '9788375150207', 'dostępna', 10);
 
 
 -- Insert sample loans into the "Loans" table

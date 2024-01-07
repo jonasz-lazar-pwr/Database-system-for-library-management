@@ -26,7 +26,7 @@ public class BooksManagementWindow extends JFrame {
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("System obsługi biblioteki - zarządzeanie książkami");
-        setSize(700, 500);
+        setSize(750, 500);
         setLocationRelativeTo(null);
         setResizable(false);
         //setLayout(null);
@@ -59,14 +59,14 @@ public class BooksManagementWindow extends JFrame {
         addBookButton.setPreferredSize(new Dimension(150, 45));
 
         addBookButton.addActionListener(e -> {
-            SwingUtilities.invokeLater(() -> new AddBookWindow(jdbcUrl,dbUsername,dbPassword));
+            SwingUtilities.invokeLater(() -> new AddBookWindow(jdbcUrl,dbUsername,dbPassword,this));
         });
 
         MyButton removeBookButton = new MyButton("Usuń książkę");
         removeBookButton.setPreferredSize(new Dimension(150, 45));
 
         removeBookButton.addActionListener(e -> {
-            SwingUtilities.invokeLater(() -> new RemoveBookWindow(jdbcUrl, dbUsername, dbPassword));
+            SwingUtilities.invokeLater(() -> new RemoveBookWindow(jdbcUrl, dbUsername, dbPassword,this));
         });
 
 
@@ -89,7 +89,7 @@ public class BooksManagementWindow extends JFrame {
     private void initializeBooksTable() {
         ArrayList<String[]> tableData = fetchDataFromDatabaseBooks();
 
-        String[] columnNames = {"Tytuł książki", "Autor", "Rok wydania", "Dostępność"};
+        String[] columnNames = {"Tytuł książki", "Autor", "Rok wydania", "Dostępność", "Ilość"};
 
         DefaultTableModel model = new DefaultTableModel(tableData.toArray(new Object[0][0]), columnNames) {
             @Override
@@ -122,7 +122,7 @@ public class BooksManagementWindow extends JFrame {
         ArrayList<String[]> data = new ArrayList<>();
 
         try (Connection connection = DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword)) {
-            String query = "SELECT BookTitle, AuthorFullName, PublicationYear, BookAvailability FROM BookView";
+            String query = "SELECT BookTitle, AuthorFullName, PublicationYear, BookAvailability, Amount FROM BookView";
             try (PreparedStatement statement = connection.prepareStatement(query);
                  ResultSet resultSet = statement.executeQuery()) {
 
@@ -131,7 +131,8 @@ public class BooksManagementWindow extends JFrame {
                     String authorFullName = resultSet.getString("AuthorFullName");
                     String publicationYear = resultSet.getString("PublicationYear");
                     String availability = resultSet.getString("BookAvailability");
-                    data.add(new String[]{bookTitle, authorFullName, publicationYear, availability});
+                    String amount = resultSet.getString("Amount");
+                    data.add(new String[]{bookTitle, authorFullName, publicationYear, availability, amount});
                 }
             }
         } catch (SQLException e) {
@@ -171,5 +172,15 @@ public class BooksManagementWindow extends JFrame {
 
     public String getUsername(){
         return this.username;
+    }
+
+    public void refreshBooksTable() {
+        DefaultTableModel model = (DefaultTableModel) booksTable.getModel();
+        model.setRowCount(0);
+        ArrayList<String[]> tableData = fetchDataFromDatabaseBooks();
+        for (String[] rowData : tableData) {
+            model.addRow(rowData);
+        }
+        model.fireTableDataChanged();
     }
 }

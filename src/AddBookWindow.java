@@ -7,11 +7,13 @@ public class AddBookWindow extends JFrame {
     private final String jdbcUrl;
     private final String dbUsername;
     private final String dbPassword;
+    private final BooksManagementWindow parentWindow;
 
-    public AddBookWindow(String jdbcUrl, String dbUsername, String dbPassword) {
+    public AddBookWindow(String jdbcUrl, String dbUsername, String dbPassword, BooksManagementWindow parentWindow) {
         this.jdbcUrl = jdbcUrl;
         this.dbUsername = dbUsername;
         this.dbPassword = dbPassword;
+        this.parentWindow = parentWindow;
 
         JTextField titleField = new JTextField();
         JTextField firstNameField = new JTextField();
@@ -19,13 +21,14 @@ public class AddBookWindow extends JFrame {
         JTextField publisherField = new JTextField();
         JTextField yearField = new JTextField();
         JTextField isbnField = new JTextField();
+        JTextField amountField = new JTextField();
 
         setTitle("Dodawanie książki");
-        setSize(440, 300);
+        setSize(440, 330);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new GridLayout(7, 2));
+        mainPanel.setLayout(new GridLayout(8, 2));
 
         mainPanel.add(new JLabel("Tytuł książki:"));
         mainPanel.add(titleField);
@@ -45,6 +48,9 @@ public class AddBookWindow extends JFrame {
         mainPanel.add(new JLabel("ISBN:"));
         mainPanel.add(isbnField);
 
+        mainPanel.add(new JLabel("Ilość:"));
+        mainPanel.add(amountField);
+
         JButton cancelButton = new JButton("Anuluj");
         JButton confirmButton = new JButton("Potwierdź");
 
@@ -59,7 +65,9 @@ public class AddBookWindow extends JFrame {
             String publisher = publisherField.getText();
             String year = yearField.getText();
             String isbn = isbnField.getText();
-            addBookToDatabase(title, lastName, firstName, publisher, Integer.parseInt(year), isbn, "dostępna");
+            String amount = amountField.getText();
+            addBookToDatabase(title, lastName, firstName, publisher, Integer.parseInt(year), isbn, "dostępna", amount);
+            parentWindow.refreshBooksTable();
         });
 
         mainPanel.setFocusable(true);
@@ -71,10 +79,10 @@ public class AddBookWindow extends JFrame {
     }
 
     private void addBookToDatabase(String title, String authorLastName, String authorFirstName,
-                                   String publisher, int publicationYear, String isbn, String availability) {
+                                   String publisher, int publicationYear, String isbn, String availability, String amount) {
         try (Connection connection = DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword)) {
             String query = "INSERT INTO Books (Title, AuthorLastName, AuthorFirstName, Publisher, " +
-                    "PublicationYear, ISBN, BookAvailability) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                    "PublicationYear, ISBN, BookAvailability, Amount) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setString(1, title);
@@ -84,6 +92,7 @@ public class AddBookWindow extends JFrame {
                 statement.setInt(5, publicationYear);
                 statement.setString(6, isbn);
                 statement.setString(7, availability);
+                statement.setString(8, amount);
 
                 int affectedRows = statement.executeUpdate();
 

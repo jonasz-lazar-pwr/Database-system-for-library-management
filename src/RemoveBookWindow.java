@@ -11,11 +11,14 @@ public class RemoveBookWindow extends JFrame {
     private final String dbUsername;
     private final String dbPassword;
 
-    public RemoveBookWindow(String jdbcUrl, String dbUsername, String dbPassword) {
+    private final BooksManagementWindow parentWindow;
+
+    public RemoveBookWindow(String jdbcUrl, String dbUsername, String dbPassword, BooksManagementWindow parentWindow) {
 
         this.jdbcUrl = jdbcUrl;
         this.dbUsername = dbUsername;
         this.dbPassword = dbPassword;
+        this.parentWindow = parentWindow;
 
         JTextField isbnField = new JTextField();
 
@@ -60,6 +63,7 @@ public class RemoveBookWindow extends JFrame {
 
                 if (affectedRows > 0) {
                     JOptionPane.showMessageDialog(this, "Usunięto książkę!", "Potwierdzenie usunięcia", JOptionPane.INFORMATION_MESSAGE);
+                    parentWindow.refreshBooksTable();
                     dispose();
                 } else {
                     JOptionPane.showMessageDialog(this, "Nie znaleziono książki o podanym ISBN.", "Błąd", JOptionPane.ERROR_MESSAGE);

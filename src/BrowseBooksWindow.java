@@ -31,7 +31,7 @@ public class BrowseBooksWindow extends JFrame {
         // Ustawienia okna
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("System obsługi biblioteki - przeglądanie książek");
-        setSize(700, 500);
+        setSize(750, 500);
         setLocationRelativeTo(null);
         setResizable(false);
         getContentPane().setBackground(Color.DARK_GRAY);
@@ -107,7 +107,7 @@ public class BrowseBooksWindow extends JFrame {
     private void initializeTable(){
         ArrayList<String[]> tableData = fetchDataFromDatabase();
 
-        String[] columnNames = {"Tytuł książki", "Autor", "Rok wydania", "Dostępność"};
+        String[] columnNames = {"Tytuł książki", "Autor", "Rok wydania", "Dostępność", "Ilość"};
 
         DefaultTableModel model = new DefaultTableModel(tableData.toArray(new Object[0][0]), columnNames){
             @Override
@@ -141,7 +141,7 @@ public class BrowseBooksWindow extends JFrame {
         ArrayList<String[]> data = new ArrayList<>();
 
         try (Connection connection = DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword)) {
-            String query = "SELECT BookTitle, AuthorFullName, PublicationYear, BookAvailability FROM BookView";
+            String query = "SELECT BookTitle, AuthorFullName, PublicationYear, BookAvailability, Amount FROM BookView";
             try (PreparedStatement statement = connection.prepareStatement(query);
                  ResultSet resultSet = statement.executeQuery()) {
 
@@ -150,7 +150,8 @@ public class BrowseBooksWindow extends JFrame {
                     String authorFullName = resultSet.getString("AuthorFullName");
                     String publicationYear = resultSet.getString("PublicationYear");
                     String availability = resultSet.getString("BookAvailability");
-                    data.add(new String[]{bookTitle, authorFullName, publicationYear, availability});
+                    String amount = resultSet.getString("Amount");
+                    data.add(new String[]{bookTitle, authorFullName, publicationYear, availability, amount});
                 }
             }
         } catch (SQLException e) {
@@ -188,6 +189,21 @@ public class BrowseBooksWindow extends JFrame {
                         String message = "Wypożyczono książkę: " + bookTitle;
                         JOptionPane.showMessageDialog(this, message, "Potwierdzenie wypożyczenia", JOptionPane.INFORMATION_MESSAGE);
                         System.out.println(username + " wypożyczył " + bookTitle);
+
+                        // Zmiana ilości w bibliotece
+                        int currentAmount = getBookAmount(bookTitle);
+
+                        String updateQuery = "UPDATE Books SET Amount = Amount - 1";
+                        if (currentAmount - 1 == 0) {
+                            updateQuery += ", BookAvailability = 'niedostępna'";
+                        }
+                        updateQuery += " WHERE BookID = ?";
+                        try (PreparedStatement updateStatement = connection.prepareStatement(updateQuery)) {
+                            updateStatement.setInt(1, getBookID(bookTitle));
+                            updateStatement.executeUpdate();
+                            refreshTable();
+                        }
+
                     } catch (SQLException e) {
                         e.printStackTrace();
                         JOptionPane.showMessageDialog(this, "Błąd podczas wypożyczania książki.", "Błąd", JOptionPane.ERROR_MESSAGE);
@@ -380,5 +396,32 @@ public class BrowseBooksWindow extends JFrame {
             }
         }
         return false;
+    }
+
+    private void refreshTable() {
+        DefaultTableModel model = (DefaultTableModel) booksTable.getModel();
+        model.setRowCount(0);
+        ArrayList<String[]> tableData = fetchDataFromDatabase();
+        for (String[] rowData : tableData) {
+            model.addRow(rowData);
+        }
+        model.fireTableDataChanged();
+    }
+
+    private int getBookAmount(String bookTitle) {
+        try (Connection connection = DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword)) {
+            String query = "SELECT Amount FROM Books WHERE Title = ?";
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setString(1, bookTitle);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        return resultSet.getInt("Amount");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 }

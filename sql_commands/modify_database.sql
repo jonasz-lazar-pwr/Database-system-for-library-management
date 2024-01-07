@@ -33,8 +33,9 @@ CREATE TABLE Books (
     Publisher VARCHAR(50) NOT NULL,
     PublicationYear INT NOT NULL,
     ISBN VARCHAR(13) UNIQUE NOT NULL,
-    BookAvailability ENUM('dostępna', 'wypożyczona', 'zarezerwowana')
-        CHECK (BookAvailability IN ('dostępna', 'wypożyczona', 'zarezerwowana'))
+    Amount INT NOT NULL,
+    BookAvailability ENUM('dostępna', 'niedostępna')
+        CHECK (BookAvailability IN ('dostępna', 'niedostępna'))
 );
 
 -- Create table "Loans"

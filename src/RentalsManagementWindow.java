@@ -135,7 +135,7 @@ public class RentalsManagementWindow extends JFrame {
 
             try (Connection connection = DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword)) {
                 String updateLoanQuery = "UPDATE Loans SET ReturnDate = CURRENT_DATE, Status = 'zrealizowane' WHERE LoanID = ?";
-                String updateBookQuery = "UPDATE Books SET BookAvailability = 'dostępna' WHERE BookID = (SELECT BookID FROM Loans WHERE LoanID = ?)";
+                String updateBookQuery = "UPDATE Books SET BookAvailability = 'dostępna', Amount = Amount + 1 WHERE BookID = (SELECT BookID FROM Loans WHERE LoanID = ?)";
 
                 try (PreparedStatement updateLoanStatement = connection.prepareStatement(updateLoanQuery);
                      PreparedStatement updateBookStatement = connection.prepareStatement(updateBookQuery)) {
@@ -152,6 +152,7 @@ public class RentalsManagementWindow extends JFrame {
 
                     String message = "Zwrócono książkę o ID: " + loanID;
                     JOptionPane.showMessageDialog(this, message, "Potwierdzenie zwrotu", JOptionPane.INFORMATION_MESSAGE);
+
                     updateLoansTable();
                 } catch (SQLException e) {
                     e.printStackTrace();

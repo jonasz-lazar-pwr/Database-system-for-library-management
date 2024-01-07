@@ -110,7 +110,7 @@ public class AccountManagementWindow extends JFrame implements FocusListener {
             // Sprawdzamy, czy hasło zostało zmienione
             if (!isDefaultPassword) {
                 // Tutaj dokonujemy aktualizacji hasła i sprawdzamy, czy operacja się powiodła
-                boolean passwordUpdated = updatePassword(newUsername, newPassword);
+                boolean passwordUpdated = updatePassword(this.username, newPassword);
 
                 // Jeśli hasło zostało zmienione poprawnie
                 if (passwordUpdated) {

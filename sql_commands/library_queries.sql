@@ -80,7 +80,8 @@ SELECT
     Title AS BookTitle,
     CONCAT(AuthorFirstName, ' ', AuthorLastName) AS AuthorFullName,
     PublicationYear,
-    BookAvailability
+    BookAvailability,
+    Amount
 FROM
     Books;
 
@@ -111,9 +112,7 @@ SELECT
 FROM
     Loans L
 JOIN Users U ON L.UserID = U.UserID
-JOIN Books B ON L.BookID = B.BookID
-WHERE
-    L.Status <> 'zrealizowane';
+JOIN Books B ON L.BookID = B.BookID;
 
 
 -- ---------- RAPORTY ----------
