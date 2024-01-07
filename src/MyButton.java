@@ -3,7 +3,7 @@ import javax.swing.JButton;
 import javax.swing.border.LineBorder;
 
 public class MyButton extends JButton {
-    public MyButton(String text, int mainR, int mainG, int mainB) {
+    public MyButton(String text) {
         this.setText(text);
         this.setPreferredSize(new Dimension(200, 55));
         this.setFocusPainted(false);
@@ -12,7 +12,7 @@ public class MyButton extends JButton {
         this.setVerticalTextPosition(0);
         this.setFont(new Font("Roboto", Font.BOLD, 16));
         this.setForeground(Color.LIGHT_GRAY);
-        this.setBackground(new Color(mainR, mainG, mainB));
+        this.setBackground(new Color(55, 88, 159));
         this.setOpaque(true);
         this.setBorder(new LineBorder(Color.GRAY));
     }

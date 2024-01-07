@@ -12,23 +12,15 @@ public class HistoryViewWindow extends JFrame {
     private final String dbPassword;
     private final String username;
 
-    private final int mainR;
-    private final int mainG;
-    private final int mainB;
-
     private JPanel panel;
     private JTable historyTable;
 
-    public HistoryViewWindow(String jdbcUrl, String dbUsername, String dbPassword, String username, int mainR, int mainG, int mainB) {
+    public HistoryViewWindow(String jdbcUrl, String dbUsername, String dbPassword, String username) {
 
         this.jdbcUrl = jdbcUrl;
         this.dbUsername = dbUsername;
         this.dbPassword = dbPassword;
         this.username = username;
-
-        this.mainR = mainR;
-        this.mainG = mainG;
-        this.mainB = mainB;
 
         initComponents();
 
@@ -57,11 +49,11 @@ public class HistoryViewWindow extends JFrame {
         buttonsPanel.setBackground(Color.LIGHT_GRAY);
         buttonsPanel.setOpaque(false);
 
-        MyButton okButton = new MyButton("OK", mainR, mainG, mainB);
+        MyButton okButton = new MyButton("OK");
         okButton.setPreferredSize(new Dimension(150, 45));
 
         okButton.addActionListener(e -> {
-            SwingUtilities.invokeLater(() -> new UserWindow(jdbcUrl, dbUsername, dbPassword, username, mainR, mainG, mainB));
+            SwingUtilities.invokeLater(() -> new UserWindow(jdbcUrl, dbUsername, dbPassword, username));
             dispose();
         });
 

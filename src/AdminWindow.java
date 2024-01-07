@@ -8,22 +8,14 @@ public class AdminWindow extends JFrame {
     private final String dbPassword;
     private final String username;
 
-    private final int mainR;
-    private final int mainG;
-    private final int mainB;
-
     JPanel buttonsPanel;
 
-    public AdminWindow(String jdbcUrl, String dbUsername, String dbPassword, String username, int mainR, int mainG, int mainB) {
+    public AdminWindow(String jdbcUrl, String dbUsername, String dbPassword, String username) {
 
         this.jdbcUrl = jdbcUrl;
         this.dbUsername = dbUsername;
         this.dbPassword = dbPassword;
         this.username = username;
-
-        this.mainR = mainR;
-        this.mainG = mainG;
-        this.mainB = mainB;
 
         initComponents();
 
@@ -52,37 +44,38 @@ public class AdminWindow extends JFrame {
         buttonsPanel.setBackground(Color.GRAY);
         buttonsPanel.setOpaque(false);
 
-        MyButton rentalsManagementButton = new MyButton("Wypożyczenia", mainR, mainG, mainB);
+        MyButton rentalsManagementButton = new MyButton("Wypożyczenia");
 
         rentalsManagementButton.addActionListener(e -> {
-            SwingUtilities.invokeLater(() -> new RentalsManagementWindow(jdbcUrl, dbUsername, dbPassword, username, mainR, mainG, mainB));
+            SwingUtilities.invokeLater(() -> new RentalsManagementWindow(jdbcUrl, dbUsername, dbPassword, username));
             dispose();
         });
 
-        MyButton viewBooksButton = new MyButton("Zarządzaj książkami", mainR, mainG, mainB);
+        MyButton viewBooksButton = new MyButton("Zarządzaj książkami");
 
         viewBooksButton.addActionListener(e -> {
-            SwingUtilities.invokeLater(() -> new BooksManagementWindow(jdbcUrl, dbUsername, dbPassword, username, mainR, mainG, mainB));
+            SwingUtilities.invokeLater(() -> new BooksManagementWindow(jdbcUrl, dbUsername, dbPassword, username));
             dispose();
         });
 
-        MyButton accountManagementButton = new MyButton("Moje konto", mainR, mainG, mainB);
+        MyButton accountManagementButton = new MyButton("Moje konto");
 
         accountManagementButton.addActionListener(e -> {
-            SwingUtilities.invokeLater(() -> new AccountManagementWindow(jdbcUrl, dbUsername, dbPassword, username, mainR, mainG, mainB));
+            SwingUtilities.invokeLater(() -> new AccountManagementWindow(jdbcUrl, dbUsername, dbPassword, username));
             dispose();
         });
 
-        MyButton reportButton = new MyButton("Raporty", mainR, mainG, mainB);
+        MyButton reportButton = new MyButton("Raporty");
 
         reportButton.addActionListener(e -> {
-            SwingUtilities.invokeLater(() -> new ReportWindow(jdbcUrl, dbUsername, dbPassword));
+            SwingUtilities.invokeLater(() -> new ReportWindow(jdbcUrl, dbUsername, dbPassword, username));
+            dispose();
         });
 
-        MyButton logoutButton = new MyButton("Wyloguj się", mainR, mainG, mainB);
+        MyButton logoutButton = new MyButton("Wyloguj się");
 
         logoutButton.addActionListener(e -> {
-            SwingUtilities.invokeLater(() -> new LoginWindow(jdbcUrl, dbUsername, dbPassword, mainR, mainG, mainB));
+            SwingUtilities.invokeLater(() -> new LoginWindow(jdbcUrl, dbUsername, dbPassword));
             dispose();
         });
 

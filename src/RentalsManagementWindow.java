@@ -12,23 +12,15 @@ public class RentalsManagementWindow extends JFrame {
     private final String dbPassword;
     private final String username;
 
-    private final int mainR;
-    private final int mainG;
-    private final int mainB;
-
     private JPanel panel;
     private JTable loansTable;
 
-    public RentalsManagementWindow(String jdbcUrl, String dbUsername, String dbPassword, String username, int mainR, int mainG, int mainB) {
+    public RentalsManagementWindow(String jdbcUrl, String dbUsername, String dbPassword, String username) {
 
         this.jdbcUrl = jdbcUrl;
         this.dbUsername = dbUsername;
         this.dbPassword = dbPassword;
         this.username = username;
-
-        this.mainR = mainR;
-        this.mainG = mainG;
-        this.mainB = mainB;
 
         initComponents();
 
@@ -54,18 +46,18 @@ public class RentalsManagementWindow extends JFrame {
         buttonsPanel.setBackground(Color.LIGHT_GRAY);
         buttonsPanel.setOpaque(false);
 
-        MyButton returnBookButton = new MyButton("Zwróć książkę", mainR, mainG, mainB);
+        MyButton returnBookButton = new MyButton("Zwróć książkę");
         returnBookButton.setPreferredSize(new Dimension(150, 45));
 
         returnBookButton.addActionListener(e -> {
             returnBook();
         });
 
-        MyButton menuReturnButton = new MyButton("Powrót", mainR, mainG, mainB);
+        MyButton menuReturnButton = new MyButton("Powrót");
         menuReturnButton.setPreferredSize(new Dimension(150, 45));
 
         menuReturnButton.addActionListener(e -> {
-            SwingUtilities.invokeLater(() -> new AdminWindow(jdbcUrl, dbUsername, dbPassword, username, mainR, mainG, mainB));
+            SwingUtilities.invokeLater(() -> new AdminWindow(jdbcUrl, dbUsername, dbPassword, username));
             dispose();
         });
 

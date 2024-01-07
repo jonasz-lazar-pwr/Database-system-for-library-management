@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS Books;
 DROP TABLE IF EXISTS Users;
 
 -- DROP DATABASE libraryDB;
--- CREATE DATABASE libraryDB;
+CREATE DATABASE libraryDB;
 
 USE libraryDB;
 

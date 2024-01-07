@@ -13,10 +13,6 @@ public class RegisterWindow extends JFrame implements FocusListener, ActionListe
     private final String dbUsername;
     private final String dbPassword;
 
-    private final int mainR = 55;
-    private final int mainG = 88;
-    private final int mainB = 159;
-
     private MyTextField firstNameField;
     private MyTextField lastNameField;
     private MyTextField addressField;
@@ -30,6 +26,7 @@ public class RegisterWindow extends JFrame implements FocusListener, ActionListe
     private MyButton registerButton;
 
     private JPanel textFieldPanel;
+    private JPanel buttonsPanel;
 
     public RegisterWindow(String jdbcUrl, String dbUsername, String dbPassword) {
 
@@ -51,61 +48,78 @@ public class RegisterWindow extends JFrame implements FocusListener, ActionListe
         requestFocusInWindow();
 
         add(textFieldPanel);
+        add(buttonsPanel);
     }
 
     private void initComponents() {
 
         textFieldPanel = new JPanel();
-        textFieldPanel.setBounds(145, 5, 200, 435);
+        textFieldPanel.setBounds(145, 15, 200, 365);
         textFieldPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 10));
         textFieldPanel.setBackground(Color.LIGHT_GRAY);
         textFieldPanel.setOpaque(false);
 
         // Dodanie pól tekstowych
-        firstNameField = new MyTextField("Imię", mainR, mainG, mainB);
+        firstNameField = new MyTextField("Imię");
         firstNameField.setPreferredSize(new Dimension(200, 35));
         firstNameField.addFocusListener(this);
         textFieldPanel.add(firstNameField);
 
-        lastNameField = new MyTextField("Nazwisko", mainR, mainG, mainB);
+        lastNameField = new MyTextField("Nazwisko");
         lastNameField.setPreferredSize(new Dimension(200, 35));
         lastNameField.addFocusListener(this);
         textFieldPanel.add(lastNameField);
 
-        addressField = new MyTextField("Adres zamieszkania", mainR, mainG, mainB);
+        addressField = new MyTextField("Adres zamieszkania");
         addressField.setPreferredSize(new Dimension(200, 35));
         addressField.addFocusListener(this);
         textFieldPanel.add(addressField);
 
-        phoneField = new MyTextField("Numer telefonu", mainR, mainG, mainB);
+        phoneField = new MyTextField("Numer telefonu");
         phoneField.setPreferredSize(new Dimension(200, 35));
         phoneField.addFocusListener(this);
         textFieldPanel.add(phoneField);
 
-        mailField = new MyTextField("Adres e-mail", mainR, mainG, mainB);
+        mailField = new MyTextField("Adres e-mail");
         mailField.setPreferredSize(new Dimension(200, 35));
         mailField.addFocusListener(this);
         textFieldPanel.add(mailField);
 
-        cardNumberField = new MyTextField("Numer karty bibliotecznej", mainR, mainG, mainB);
+        cardNumberField = new MyTextField("Numer karty bibliotecznej");
         cardNumberField.setPreferredSize(new Dimension(200, 35));
         cardNumberField.addFocusListener(this);
         textFieldPanel.add(cardNumberField);
 
-        usernameField = new MyTextField("Login", mainR, mainG, mainB);
+        usernameField = new MyTextField("Login");
         usernameField.setPreferredSize(new Dimension(200, 35));
         usernameField.addFocusListener(this);
         textFieldPanel.add(usernameField);
 
-        passwordField = new MyPasswordField("Hasło", mainR, mainG, mainB);
+        passwordField = new MyPasswordField("Hasło");
         passwordField.setPreferredSize(new Dimension(200,35));
         passwordField.addFocusListener(this);
         textFieldPanel.add(passwordField);
 
+        buttonsPanel = new JPanel();
+        buttonsPanel.setBounds(80, 380, 340, 65);
+        buttonsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 10));
+        buttonsPanel.setBackground(Color.LIGHT_GRAY);
+        buttonsPanel.setOpaque(false);
+
+        MyButton cancelButton = new MyButton("Anuluj");
+        cancelButton.setPreferredSize(new Dimension(150, 45));
+
+        cancelButton.addActionListener(e -> {
+            SwingUtilities.invokeLater(() -> new LoginWindow(jdbcUrl, dbUsername, dbPassword));
+            dispose();
+        });
+        buttonsPanel.add(cancelButton);
+
         // Przycisk odpowiedzialny za rejestrowanie nowego użytkownika
-        registerButton = new MyButton("Utwórz konto", mainR, mainG, mainB);
+        registerButton = new MyButton("Utwórz konto");
+        registerButton.setPreferredSize(new Dimension(150, 45));
         registerButton.addActionListener(this);
-        textFieldPanel.add(registerButton);
+        buttonsPanel.add(registerButton);
     }
 
     @Override
@@ -143,7 +157,7 @@ public class RegisterWindow extends JFrame implements FocusListener, ActionListe
                     System.out.println(rowsAdded + " wiersz(y) dodano.");
 
                     JOptionPane.showMessageDialog(RegisterWindow.this, "Zarejestrowano użytkownika, teraz możesz się zalogować", "Koniec rejestracji", JOptionPane.INFORMATION_MESSAGE);
-                    SwingUtilities.invokeLater(() -> new LoginWindow(jdbcUrl, dbUsername, dbPassword, mainR, mainG, mainB));
+                    SwingUtilities.invokeLater(() -> new LoginWindow(jdbcUrl, dbUsername, dbPassword));
                     dispose();
                 }
             } catch (Exception ex) {

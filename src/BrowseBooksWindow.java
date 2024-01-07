@@ -14,25 +14,17 @@ public class BrowseBooksWindow extends JFrame {
     private final String dbPassword;
     private final String username;
 
-    private final int mainR;
-    private final int mainG;
-    private final int mainB;
-
     JTable booksTable;
     JPanel panel;
     JPanel topButtonsPanel;
     JPanel bottomButtonsPanel;
 
-    public BrowseBooksWindow(String jdbcUrl, String dbUsername, String dbPassword, String username, int mainR, int mainG, int mainB) {
+    public BrowseBooksWindow(String jdbcUrl, String dbUsername, String dbPassword, String username) {
 
         this.jdbcUrl = jdbcUrl;
         this.dbUsername = dbUsername;
         this.dbPassword = dbPassword;
         this.username = username;
-
-        this.mainR = mainR;
-        this.mainG = mainG;
-        this.mainB = mainB;
 
         initComponents();
 
@@ -64,17 +56,17 @@ public class BrowseBooksWindow extends JFrame {
         bottomButtonsPanel.setBackground(Color.LIGHT_GRAY);
         bottomButtonsPanel.setOpaque(false);
 
-        MyButton cancelButton = new MyButton("Powrót", mainR, mainG, mainB);
+        MyButton cancelButton = new MyButton("Powrót");
         cancelButton.setPreferredSize(new Dimension(150, 45));
 
-        MyButton borrowBookButton = new MyButton("Wypożycz", mainR, mainG, mainB);
+        MyButton borrowBookButton = new MyButton("Wypożycz");
         borrowBookButton.setPreferredSize(new Dimension(130, 45));
         borrowBookButton.setFont(new Font("Roboto", Font.PLAIN, 16));
         borrowBookButton.setForeground(Color.DARK_GRAY);
         borrowBookButton.setBackground(Color.LIGHT_GRAY);
         borrowBookButton.setBorder(new LineBorder(Color.GRAY));
 
-        MyButton reserveBookButton = new MyButton("Zarezerwuj", mainR, mainG, mainB);
+        MyButton reserveBookButton = new MyButton("Zarezerwuj");
         reserveBookButton.setPreferredSize(new Dimension(130, 45));
         reserveBookButton.setFont(new Font("Roboto", Font.PLAIN, 16));
         reserveBookButton.setForeground(Color.DARK_GRAY);
@@ -82,7 +74,7 @@ public class BrowseBooksWindow extends JFrame {
         reserveBookButton.setBorder(new LineBorder(Color.GRAY));
 
         cancelButton.addActionListener(e -> {
-            SwingUtilities.invokeLater(() -> new UserWindow(jdbcUrl, dbUsername, dbPassword, username, mainR, mainG, mainB));
+            SwingUtilities.invokeLater(() -> new UserWindow(jdbcUrl, dbUsername, dbPassword, username));
             dispose();
         });
 

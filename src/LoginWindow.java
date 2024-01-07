@@ -14,10 +14,6 @@ public class LoginWindow extends JFrame implements FocusListener {
     private final String dbUsername;
     private final String dbPassword;
 
-    private final int mainR;
-    private final int mainG;
-    private final int mainB;
-
     private MyTextField usernameField;
     private MyPasswordField passwordField;
 
@@ -25,15 +21,11 @@ public class LoginWindow extends JFrame implements FocusListener {
     private JPanel buttonPanel;
 
 
-    public LoginWindow(String jdbcUrl, String dbUsername, String dbPassword, int mainR, int mainG, int mainB) {
+    public LoginWindow(String jdbcUrl, String dbUsername, String dbPassword) {
         // Ustawienia połączenia z bazą danych
         this.jdbcUrl = jdbcUrl;
         this.dbUsername = dbUsername;
         this.dbPassword = dbPassword;
-
-        this.mainR = mainR;
-        this.mainG = mainG;
-        this.mainB = mainB;
 
         initComponents();
 
@@ -63,12 +55,12 @@ public class LoginWindow extends JFrame implements FocusListener {
         textFieldPanel.setOpaque(false);
 
         // Pole tekstowe przyjmujące login użytkownika
-        usernameField = new MyTextField("Login", mainR, mainG, mainB);
+        usernameField = new MyTextField("Login");
         usernameField.addFocusListener(this);
         textFieldPanel.add(usernameField);
 
         // Pole tekstowe przyjmujące hasło użytkownika
-        passwordField = new MyPasswordField("Hasło", mainR, mainG, mainB);
+        passwordField = new MyPasswordField("Hasło");
         passwordField.addFocusListener(this);
         textFieldPanel.add(passwordField);
 
@@ -84,7 +76,7 @@ public class LoginWindow extends JFrame implements FocusListener {
         buttonPanel.add(loginButton);
 
         // Przycisk odpowiedzialny za rejestrowanie nowego użytkownika
-        MyButton registerButton = new MyButton("Zarejestruj się", mainR, mainG, mainB);
+        MyButton registerButton = new MyButton("Zarejestruj się");
 
         registerButton.addActionListener(e -> {
             SwingUtilities.invokeLater(() -> new RegisterWindow(jdbcUrl, dbUsername, dbPassword));
@@ -95,7 +87,7 @@ public class LoginWindow extends JFrame implements FocusListener {
     }
 
     private MyButton getMyButton() {
-        MyButton loginButton = new MyButton("Zaloguj się", mainR, mainG, mainB);
+        MyButton loginButton = new MyButton("Zaloguj się");
 
         loginButton.addActionListener(e -> {
             String username = usernameField.getText();
@@ -111,13 +103,13 @@ public class LoginWindow extends JFrame implements FocusListener {
                 if (check==1){
                     System.out.println("Zalogowano jako czytelnik");
 
-                    SwingUtilities.invokeLater(() -> new UserWindow(jdbcUrl, dbUsername, dbPassword, username, mainR, mainG, mainB));
+                    SwingUtilities.invokeLater(() -> new UserWindow(jdbcUrl, dbUsername, dbPassword, username));
                     dispose();
 
                 } else if (check == 2) {
                     System.out.println("Zalogowano jako bibliotekarz");
 
-                    SwingUtilities.invokeLater(() -> new AdminWindow(jdbcUrl, dbUsername, dbPassword, username, mainR, mainG, mainB));
+                    SwingUtilities.invokeLater(() -> new AdminWindow(jdbcUrl, dbUsername, dbPassword, username));
                     dispose();
 
                 } else {

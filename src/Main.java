@@ -18,11 +18,8 @@ public class Main {
         String jdbcUrl = properties.getProperty("jdbcUrl");
         String dbUsername = properties.getProperty("dbUsername");
         String dbPassword = properties.getProperty("dbPassword");
-        int mainR = Integer.parseInt(properties.getProperty("mainR"));
-        int mainG = Integer.parseInt(properties.getProperty("mainG"));
-        int mainB = Integer.parseInt(properties.getProperty("mainB"));
 
-        SwingUtilities.invokeLater(() -> new LoginWindow(jdbcUrl, dbUsername, dbPassword, mainR, mainG, mainB));
+        SwingUtilities.invokeLater(() -> new LoginWindow(jdbcUrl, dbUsername, dbPassword));
 
     }
 }

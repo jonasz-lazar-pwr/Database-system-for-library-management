@@ -12,23 +12,15 @@ public class ReservationsManagementWindow extends JFrame {
     private final String dbPassword;
     private final String username;
 
-    private final int mainR;
-    private final int mainG;
-    private final int mainB;
-
     private JPanel panel;
     private JTable reservationsTable;
 
-    public ReservationsManagementWindow(String jdbcUrl, String dbUsername, String dbPassword, String username, int mainR, int mainG, int mainB) {
+    public ReservationsManagementWindow(String jdbcUrl, String dbUsername, String dbPassword, String username) {
 
         this.jdbcUrl = jdbcUrl;
         this.dbUsername = dbUsername;
         this.dbPassword = dbPassword;
         this.username = username;
-
-        this.mainR = mainR;
-        this.mainG = mainG;
-        this.mainB = mainB;
 
         initComponents();
 
@@ -55,7 +47,7 @@ public class ReservationsManagementWindow extends JFrame {
         buttonsPanel.setBackground(Color.LIGHT_GRAY);
         buttonsPanel.setOpaque(false);
 
-        MyButton cancelReservationButton = new MyButton("Anuluj rezerwację", mainR, mainG, mainB);
+        MyButton cancelReservationButton = new MyButton("Anuluj rezerwację");
         cancelReservationButton.setPreferredSize(new Dimension(150, 45));
 
         cancelReservationButton.addActionListener(e -> {
@@ -63,11 +55,11 @@ public class ReservationsManagementWindow extends JFrame {
             refreshTable();
         });
 
-        MyButton menuReturnButton = new MyButton("Powrót", mainR, mainG, mainB);
+        MyButton menuReturnButton = new MyButton("Powrót");
         menuReturnButton.setPreferredSize(new Dimension(150, 45));
 
         menuReturnButton.addActionListener(e -> {
-            SwingUtilities.invokeLater(() -> new UserWindow(jdbcUrl, dbUsername, dbPassword, username, mainR, mainG, mainB));
+            SwingUtilities.invokeLater(() -> new UserWindow(jdbcUrl, dbUsername, dbPassword, username));
             dispose();
         });
 

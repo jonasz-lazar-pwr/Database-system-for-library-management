@@ -12,6 +12,7 @@ public class RemoveBookWindow extends JFrame {
     private final String dbPassword;
 
     public RemoveBookWindow(String jdbcUrl, String dbUsername, String dbPassword) {
+
         this.jdbcUrl = jdbcUrl;
         this.dbUsername = dbUsername;
         this.dbPassword = dbPassword;

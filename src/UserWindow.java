@@ -8,22 +8,14 @@ public class UserWindow extends JFrame {
     private final String dbPassword;
     private final String username;
 
-    private final int mainR;
-    private final int mainG;
-    private final int mainB;
-
     JPanel buttonsPanel;
 
-    public UserWindow(String jdbcUrl, String dbUsername, String dbPassword, String username, int mainR, int mainG, int mainB) {
+    public UserWindow(String jdbcUrl, String dbUsername, String dbPassword, String username) {
 
         this.jdbcUrl = jdbcUrl;
         this.dbUsername = dbUsername;
         this.dbPassword = dbPassword;
         this.username = username;
-
-        this.mainR = mainR;
-        this.mainG = mainG;
-        this.mainB = mainB;
 
         initComponents();
 
@@ -53,38 +45,38 @@ public class UserWindow extends JFrame {
         buttonsPanel.setBackground(Color.GRAY);
         buttonsPanel.setOpaque(false);
 
-        MyButton browsingBooksButton = new MyButton("Przeglądaj książki", mainR, mainG, mainB);
+        MyButton browsingBooksButton = new MyButton("Przeglądaj książki");
 
         browsingBooksButton.addActionListener(e -> {
-            SwingUtilities.invokeLater(() -> new BrowseBooksWindow(jdbcUrl, dbUsername, dbPassword, username, mainR, mainG, mainB));
+            SwingUtilities.invokeLater(() -> new BrowseBooksWindow(jdbcUrl, dbUsername, dbPassword, username));
             dispose();
         });
 
-        MyButton accountManagementButton = new MyButton("Moje konto", mainR, mainG, mainB);
+        MyButton accountManagementButton = new MyButton("Moje konto");
 
         accountManagementButton.addActionListener(e -> {
-            SwingUtilities.invokeLater(() -> new AccountManagementWindow(jdbcUrl, dbUsername, dbPassword, username, mainR, mainG, mainB));
+            SwingUtilities.invokeLater(() -> new AccountManagementWindow(jdbcUrl, dbUsername, dbPassword, username));
             dispose();
         });
 
-        MyButton reservationsButton = new MyButton("Moje rezerwacje", mainR, mainG, mainB);
+        MyButton reservationsButton = new MyButton("Moje rezerwacje");
 
         reservationsButton.addActionListener(e -> {
-            SwingUtilities.invokeLater(() -> new ReservationsManagementWindow(jdbcUrl, dbUsername, dbPassword, username, mainR, mainG, mainB));
+            SwingUtilities.invokeLater(() -> new ReservationsManagementWindow(jdbcUrl, dbUsername, dbPassword, username));
             dispose();
         });
 
-        MyButton rentalHistoryButton = new MyButton("Moje wypożyczenia", mainR, mainG, mainB);
+        MyButton rentalHistoryButton = new MyButton("Moje wypożyczenia");
 
         rentalHistoryButton.addActionListener(e -> {
-            SwingUtilities.invokeLater(() -> new HistoryViewWindow(jdbcUrl, dbUsername, dbPassword, username, mainR, mainG, mainB));
+            SwingUtilities.invokeLater(() -> new HistoryViewWindow(jdbcUrl, dbUsername, dbPassword, username));
             dispose();
         });
 
-        MyButton logoutButton = new MyButton("Wyloguj się", mainR, mainG, mainB);
+        MyButton logoutButton = new MyButton("Wyloguj się");
 
         logoutButton.addActionListener(e -> {
-            SwingUtilities.invokeLater(() -> new LoginWindow(jdbcUrl, dbUsername, dbPassword, mainR, mainG, mainB));
+            SwingUtilities.invokeLater(() -> new LoginWindow(jdbcUrl, dbUsername, dbPassword));
             dispose();
         });
 

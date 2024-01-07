@@ -12,23 +12,15 @@ public class BooksManagementWindow extends JFrame {
     private final String dbPassword;
     private String username;
 
-    private final int mainR;
-    private final int mainG;
-    private final int mainB;
-
     private JPanel panel;
     private JTable booksTable;
 
-    public BooksManagementWindow(String jdbcUrl, String dbUsername, String dbPassword, String username, int mainR, int mainG, int mainB) {
+    public BooksManagementWindow(String jdbcUrl, String dbUsername, String dbPassword, String username) {
 
         this.jdbcUrl = jdbcUrl;
         this.dbUsername = dbUsername;
         this.dbPassword = dbPassword;
         this.username = username;
-
-        this.mainR = mainR;
-        this.mainG = mainG;
-        this.mainB = mainB;
 
         initComponents();
 
@@ -55,22 +47,22 @@ public class BooksManagementWindow extends JFrame {
         buttonsPanel.setBackground(Color.LIGHT_GRAY);
         buttonsPanel.setOpaque(false);
 
-        MyButton returnButton = new MyButton("Powrót", mainR, mainG, mainB);
+        MyButton returnButton = new MyButton("Powrót");
         returnButton.setPreferredSize(new Dimension(150, 45));
 
         returnButton.addActionListener(e -> {
-            SwingUtilities.invokeLater(() -> new AdminWindow(jdbcUrl, dbUsername, dbPassword, username, mainR, mainG, mainB));
+            SwingUtilities.invokeLater(() -> new AdminWindow(jdbcUrl, dbUsername, dbPassword, username));
             dispose();
         });
 
-        MyButton addBookButton = new MyButton("Dodaj książkę", mainR, mainG, mainB);
+        MyButton addBookButton = new MyButton("Dodaj książkę");
         addBookButton.setPreferredSize(new Dimension(150, 45));
 
         addBookButton.addActionListener(e -> {
             SwingUtilities.invokeLater(() -> new AddBookWindow(jdbcUrl,dbUsername,dbPassword));
         });
 
-        MyButton removeBookButton = new MyButton("Usuń książkę", mainR, mainG, mainB);
+        MyButton removeBookButton = new MyButton("Usuń książkę");
         removeBookButton.setPreferredSize(new Dimension(150, 45));
 
         removeBookButton.addActionListener(e -> {

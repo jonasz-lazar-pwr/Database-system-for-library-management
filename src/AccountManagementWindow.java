@@ -14,26 +14,18 @@ public class AccountManagementWindow extends JFrame implements FocusListener {
     private final String dbPassword;
     private String username;
 
-    private final int mainR;
-    private final int mainG;
-    private final int mainB;
-
     private MyTextField usernameField;
     private MyPasswordField passwordField;
 
     private JPanel textFieldPanel;
     private JPanel buttonPanel;
 
-    public AccountManagementWindow(String jdbcUrl, String dbUsername, String dbPassword, String username, int mainR, int mainG, int mainB/*, UserWindow userWindowReference, AdminWindow adminWindowReference*/) {
+    public AccountManagementWindow(String jdbcUrl, String dbUsername, String dbPassword, String username) {
 
         this.jdbcUrl = jdbcUrl;
         this.dbUsername = dbUsername;
         this.dbPassword = dbPassword;
         this.username = username;
-
-        this.mainR = mainR;
-        this.mainG = mainG;
-        this.mainB = mainB;
 
         initComponents();
 
@@ -61,12 +53,12 @@ public class AccountManagementWindow extends JFrame implements FocusListener {
         textFieldPanel.setBackground(Color.LIGHT_GRAY);
         textFieldPanel.setOpaque(false);
 
-        usernameField = new MyTextField("Nowy login", mainR, mainG, mainB);
+        usernameField = new MyTextField("Nowy login");
         usernameField.setPreferredSize(new Dimension(200, 35));
         usernameField.addFocusListener(this);
         textFieldPanel.add(usernameField);
 
-        passwordField = new MyPasswordField("Nowe hasło", mainR, mainG, mainB);
+        passwordField = new MyPasswordField("Nowe hasło");
         passwordField.setPreferredSize(new Dimension(200, 35));
         passwordField.addFocusListener(this);
         textFieldPanel.add(passwordField);
@@ -81,14 +73,14 @@ public class AccountManagementWindow extends JFrame implements FocusListener {
         MyButton confirmButton = getMyButton();
         buttonPanel.add(confirmButton);
 
-        MyButton cancelButton = new MyButton("Anuluj", mainR, mainG, mainB);
+        MyButton cancelButton = new MyButton("Anuluj");
 
         cancelButton.addActionListener(e -> {
             if (Objects.equals(getUserRole(username), "czytelnik")) {
-                SwingUtilities.invokeLater(() -> new UserWindow(jdbcUrl, dbUsername, dbPassword, username, mainR, mainG, mainB));
+                SwingUtilities.invokeLater(() -> new UserWindow(jdbcUrl, dbUsername, dbPassword, username));
                 dispose();
             } else if (Objects.equals(getUserRole(username), "bibliotekarz")) {
-                SwingUtilities.invokeLater(() -> new AdminWindow(jdbcUrl, dbUsername, dbPassword, username, mainR, mainG, mainB));
+                SwingUtilities.invokeLater(() -> new AdminWindow(jdbcUrl, dbUsername, dbPassword, username));
                 dispose();
             }
         });
@@ -98,7 +90,7 @@ public class AccountManagementWindow extends JFrame implements FocusListener {
 
     private MyButton getMyButton() {
 
-        MyButton confirmButton = new MyButton("Potwierdź", mainR, mainG, mainB);
+        MyButton confirmButton = new MyButton("Potwierdź");
 
         confirmButton.addActionListener(e -> {
 
@@ -124,12 +116,12 @@ public class AccountManagementWindow extends JFrame implements FocusListener {
                     }
 
                     if (Objects.equals(getUserRole(username), "czytelnik")) {
-                        SwingUtilities.invokeLater(() -> new UserWindow(jdbcUrl, dbUsername, dbPassword, username, mainR, mainG, mainB));
+                        SwingUtilities.invokeLater(() -> new UserWindow(jdbcUrl, dbUsername, dbPassword, username));
                         dispose();
                     }
 
                     if (Objects.equals(getUserRole(username), "bibliotekarz")) {
-                        SwingUtilities.invokeLater(() -> new AdminWindow(jdbcUrl, dbUsername, dbPassword, username, mainR, mainG, mainB));
+                        SwingUtilities.invokeLater(() -> new AdminWindow(jdbcUrl, dbUsername, dbPassword, username));
                         dispose();
                     }
 
