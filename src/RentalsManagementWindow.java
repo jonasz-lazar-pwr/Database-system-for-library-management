@@ -180,6 +180,8 @@ public class RentalsManagementWindow extends JFrame {
                         JOptionPane.showMessageDialog(this, message, "Potwierdzenie zwrotu", JOptionPane.INFORMATION_MESSAGE);
 
                         updateLoansTable();
+                        isDataFiltered = false;
+                        // todo selectedUserButton.setText("Filtruj");
                     } catch (SQLException e) {
                         e.printStackTrace();
                         connection.rollback();
