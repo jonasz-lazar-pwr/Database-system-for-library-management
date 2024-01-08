@@ -14,6 +14,7 @@ public class RentalsManagementWindow extends JFrame {
 
     private JPanel panel;
     private JTable loansTable;
+    private boolean isDataFiltered;
 
     public RentalsManagementWindow(String jdbcUrl, String dbUsername, String dbPassword, String username) {
 
@@ -21,6 +22,8 @@ public class RentalsManagementWindow extends JFrame {
         this.dbUsername = dbUsername;
         this.dbPassword = dbPassword;
         this.username = username;
+
+        this.isDataFiltered = false;
 
         initComponents();
 
@@ -61,8 +64,28 @@ public class RentalsManagementWindow extends JFrame {
             dispose();
         });
 
+        MyButton selectUserButton = new MyButton("Filtruj");
+        selectUserButton.setPreferredSize(new Dimension(150, 45));
+
+        selectUserButton.addActionListener(e -> {
+            if(!isDataFiltered){
+                String selectedUsername = JOptionPane.showInputDialog(this, "Podaj login użytkownika:", "Wybierz użytkownika", JOptionPane.PLAIN_MESSAGE);
+                if (selectedUsername != null && !selectedUsername.isEmpty()) {
+                    filterLoansByUser(selectedUsername);
+                }
+                isDataFiltered = true;
+                selectUserButton.setText("Usuń filtr");
+            } else{
+                updateLoansTable();
+                isDataFiltered = false;
+                selectUserButton.setText("Filtruj");
+            }
+
+        });
+
         buttonsPanel.add(menuReturnButton);
         buttonsPanel.add(returnBookButton);
+        buttonsPanel.add(selectUserButton);
         panel.add(buttonsPanel, BorderLayout.SOUTH);
 
         initializeLoansTable();
@@ -188,5 +211,44 @@ public class RentalsManagementWindow extends JFrame {
         for (String[] rowData : tableData) {
             model.addRow(rowData);
         }
+    }
+
+    private void updateLoansTable(ArrayList<String[]> tableData) {
+        DefaultTableModel model = (DefaultTableModel) loansTable.getModel();
+        model.setRowCount(0);
+
+        for (String[] rowData : tableData) {
+            model.addRow(rowData);
+        }
+    }
+
+    private void filterLoansByUser(String selectedUsername) {
+        ArrayList<String[]> filteredData = fetchDataForUserFromDatabaseLoans(selectedUsername);
+        updateLoansTable(filteredData);
+    }
+
+    private ArrayList<String[]> fetchDataForUserFromDatabaseLoans(String selectedUsername) {
+        ArrayList<String[]> data = new ArrayList<>();
+
+        try (Connection connection = DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword)) {
+            String query = "SELECT loan_id, login, title, loan_date, status FROM UserLoansView WHERE login = ?";
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setString(1, selectedUsername);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    while (resultSet.next()) {
+                        String loanId = resultSet.getString("loan_id");
+                        String username = resultSet.getString("login");
+                        String bookTitle = resultSet.getString("title");
+                        String loanDate = resultSet.getString("loan_date");
+                        String status = resultSet.getString("status");
+                        data.add(new String[]{loanId, username, bookTitle, loanDate, status});
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return data;
     }
 }

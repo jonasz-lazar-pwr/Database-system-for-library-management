@@ -4,6 +4,14 @@ DROP TABLE IF EXISTS Loans;
 DROP TABLE IF EXISTS Books;
 DROP TABLE IF EXISTS Users;
 
+DROP VIEW IF EXISTS longestNotReturnedBooksView;
+DROP VIEW IF EXISTS mostPopularAuthorsView;
+DROP VIEW IF EXISTS mostActiveUsersView;
+DROP VIEW IF EXISTS mostPopularBooksView;
+DROP VIEW IF EXISTS UserLoansView;
+DROP VIEW IF EXISTS UserReservationsView;
+DROP VIEW IF EXISTS BookView;
+
 -- DROP DATABASE libraryDB;
 CREATE DATABASE libraryDB;
 
