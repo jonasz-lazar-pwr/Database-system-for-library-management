@@ -131,39 +131,45 @@ public class RentalsManagementWindow extends JFrame {
         int selectedRow = loansTable.getSelectedRow();
 
         if (selectedRow != -1) {
-            String loanID = (String) loansTable.getValueAt(selectedRow, 0);
+            String status = (String) loansTable.getValueAt(selectedRow, 4);
 
-            try (Connection connection = DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword)) {
-                String updateLoanQuery = "UPDATE Loans SET ReturnDate = CURRENT_DATE, Status = 'zrealizowane' WHERE LoanID = ?";
-                String updateBookQuery = "UPDATE Books SET BookAvailability = 'dostępna', Amount = Amount + 1 WHERE BookID = (SELECT BookID FROM Loans WHERE LoanID = ?)";
+            if (!status.equals("zrealizowane")) {
+                String loanID = (String) loansTable.getValueAt(selectedRow, 0);
 
-                try (PreparedStatement updateLoanStatement = connection.prepareStatement(updateLoanQuery);
-                     PreparedStatement updateBookStatement = connection.prepareStatement(updateBookQuery)) {
+                try (Connection connection = DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword)) {
+                    String updateLoanQuery = "UPDATE Loans SET ReturnDate = CURRENT_DATE, Status = 'zrealizowane' WHERE LoanID = ?";
+                    String updateBookQuery = "UPDATE Books SET BookAvailability = 'dostępna', Amount = Amount + 1 WHERE BookID = (SELECT BookID FROM Loans WHERE LoanID = ?)";
 
-                    connection.setAutoCommit(false);
+                    try (PreparedStatement updateLoanStatement = connection.prepareStatement(updateLoanQuery);
+                         PreparedStatement updateBookStatement = connection.prepareStatement(updateBookQuery)) {
 
-                    updateLoanStatement.setString(1, loanID);
-                    updateLoanStatement.executeUpdate();
+                        connection.setAutoCommit(false);
 
-                    updateBookStatement.setString(1, loanID);
-                    updateBookStatement.executeUpdate();
+                        updateLoanStatement.setString(1, loanID);
+                        updateLoanStatement.executeUpdate();
 
-                    connection.commit();
+                        updateBookStatement.setString(1, loanID);
+                        updateBookStatement.executeUpdate();
 
-                    String message = "Zwrócono książkę o ID: " + loanID;
-                    JOptionPane.showMessageDialog(this, message, "Potwierdzenie zwrotu", JOptionPane.INFORMATION_MESSAGE);
+                        connection.commit();
 
-                    updateLoansTable();
+                        String message = "Zwrócono książkę o ID: " + loanID;
+                        JOptionPane.showMessageDialog(this, message, "Potwierdzenie zwrotu", JOptionPane.INFORMATION_MESSAGE);
+
+                        updateLoansTable();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        connection.rollback();
+                        JOptionPane.showMessageDialog(this, "Błąd podczas zwracania książki.", "Błąd", JOptionPane.ERROR_MESSAGE);
+                    } finally {
+                        connection.setAutoCommit(true);
+                    }
                 } catch (SQLException e) {
                     e.printStackTrace();
-                    connection.rollback();
-                    JOptionPane.showMessageDialog(this, "Błąd podczas zwracania książki.", "Błąd", JOptionPane.ERROR_MESSAGE);
-                } finally {
-                    connection.setAutoCommit(true);
+                    JOptionPane.showMessageDialog(this, "Błąd podczas łączenia z bazą danych.", "Błąd", JOptionPane.ERROR_MESSAGE);
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Błąd podczas łączenia z bazą danych.", "Błąd", JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Książka została już zwrócona!.", "Błąd", JOptionPane.ERROR_MESSAGE);
             }
         } else {
             JOptionPane.showMessageDialog(this, "Wybierz wypożyczenie, które chcesz zwrócić.", "Błąd", JOptionPane.ERROR_MESSAGE);
@@ -171,6 +177,7 @@ public class RentalsManagementWindow extends JFrame {
 
         return 0;
     }
+
 
     private void updateLoansTable() {
         ArrayList<String[]> tableData = fetchDataFromDatabaseLoans();
