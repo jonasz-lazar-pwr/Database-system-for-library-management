@@ -125,45 +125,137 @@ public class RegisterWindow extends JFrame implements FocusListener, ActionListe
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == registerButton) {
-            String firstName = firstNameField.getText();
-            String lastName = lastNameField.getText();
-            String address = addressField.getText();
-            String phone = phoneField.getText();
-            String cardNumber = cardNumberField.getText();
-            String email = mailField.getText();
-            String username = usernameField.getText();
-            String password = new String(passwordField.getPassword());
+            String validationMessage = validateFields();
+            if (validationMessage.isEmpty()) {
+                // Walidacja pól zakończyła się sukcesem
+                String firstName = firstNameField.getText();
+                String lastName = lastNameField.getText();
+                String address = addressField.getText();
+                String phone = phoneField.getText();
+                String cardNumber = cardNumberField.getText();
+                String email = mailField.getText();
+                String username = usernameField.getText();
+                String password = new String(passwordField.getPassword());
 
-            try {
-                Connection connection = DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword);
+                try {
+                    Connection connection = DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword);
 
-                String query = """
-                        INSERT INTO Users (FirstName, LastName, Address, PhoneNumber, CardNumber, Email, Login, UserPassword, UserRole)
-                        VALUES
-                        (?, ?, ?, ?, ?, ?, ?, MD5(?), ?)""";
+                    String query = "INSERT INTO Users (FirstName, LastName, Address, PhoneNumber, CardNumber, Email, Login, UserPassword, UserRole) VALUES (?, ?, ?, ?, ?, ?, ?, MD5(?), ?)";
 
-                try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-                    preparedStatement.setString(1, firstName);
-                    preparedStatement.setString(2, lastName);
-                    preparedStatement.setString(3, address);
-                    preparedStatement.setString(4, phone);
-                    preparedStatement.setString(5, cardNumber);
-                    preparedStatement.setString(6, email);
-                    preparedStatement.setString(7, username);
-                    preparedStatement.setString(8, password);
-                    preparedStatement.setString(9, "czytelnik");
+                    try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                        preparedStatement.setString(1, firstName);
+                        preparedStatement.setString(2, lastName);
+                        preparedStatement.setString(3, address);
+                        preparedStatement.setString(4, phone);
+                        preparedStatement.setString(5, cardNumber);
+                        preparedStatement.setString(6, email);
+                        preparedStatement.setString(7, username);
+                        preparedStatement.setString(8, password);
+                        preparedStatement.setString(9, "czytelnik");
 
-                    int rowsAdded = preparedStatement.executeUpdate();
-                    System.out.println(rowsAdded + " wiersz(y) dodano.");
+                        int rowsAdded = preparedStatement.executeUpdate();
+                        System.out.println(rowsAdded + " wiersz(y) dodano.");
 
-                    JOptionPane.showMessageDialog(RegisterWindow.this, "Zarejestrowano użytkownika, teraz możesz się zalogować", "Koniec rejestracji", JOptionPane.INFORMATION_MESSAGE);
-                    SwingUtilities.invokeLater(() -> new LoginWindow(jdbcUrl, dbUsername, dbPassword));
-                    dispose();
+                        JOptionPane.showMessageDialog(RegisterWindow.this, "Zarejestrowano użytkownika, teraz możesz się zalogować", "Koniec rejestracji", JOptionPane.INFORMATION_MESSAGE);
+                        SwingUtilities.invokeLater(() -> new LoginWindow(jdbcUrl, dbUsername, dbPassword));
+                        dispose();
+                    }
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(this, "Wystąpił błąd podczas rejestracji użytkownika.", "Błąd", JOptionPane.ERROR_MESSAGE);
                 }
-            } catch (Exception ex) {
-                ex.printStackTrace();
+            } else {
+                // Wyświetl komunikat o błędzie walidacji pól
+                JOptionPane.showMessageDialog(this, validationMessage, "Błąd walidacji", JOptionPane.ERROR_MESSAGE);
             }
         }
+    }
+
+
+    private String validateFields() {
+        StringBuilder validationMessage = new StringBuilder();
+
+        if (validateNonDefault(firstNameField, "Imię")) {
+            validationMessage.append("Pole Imię nie może pozostać puste.\n");
+        } else if (!validateName(firstNameField.getText())) {
+            validationMessage.append("Błędne imię. Imię powinno zaczynać się z dużej litery i składać z liter.\n");
+        }
+
+        if (validateNonDefault(lastNameField, "Nazwisko")) {
+            validationMessage.append("Pole Nazwisko nie może pozostać puste.\n");
+        } else if (!validateName(lastNameField.getText())) {
+            validationMessage.append("Błędne nazwisko. Nazwisko powinno zaczynać się z dużej litery i składać z liter.\n");
+        }
+
+        if (validateNonDefault(addressField, "Adres zamieszkania")) {
+            validationMessage.append("Pole Adres zamieszkania nie może pozostać puste.\n");
+        } else if (!validateAddress(addressField.getText())) {
+            validationMessage.append("Błędny adres zamieszkania. Poprawny format: ul./al./pl./os. nazwa numer, miasto.\n");
+        }
+
+        if (validateNonDefault(phoneField, "Numer telefonu")) {
+            validationMessage.append("Pole Numer telefonu nie może pozostać puste.\n");
+        } else if (!validatePhone(phoneField.getText())) {
+            validationMessage.append("Błędny numer telefonu. Poprawny format: +48 xxx xxx xxx.\n");
+        }
+
+        if (validateNonDefault(mailField, "Adres e-mail")) {
+            validationMessage.append("Pole Adres e-mail nie może pozostać puste.\n");
+        } else if (!validateEmail(mailField.getText())) {
+            validationMessage.append("Błędny adres email. Poprawny format: user@example.com.\n");
+        }
+
+        if (validateNonDefault(cardNumberField, "Numer karty bibliotecznej")) {
+            validationMessage.append("Pole Numer karty bibliotecznej nie może pozostać puste.\n");
+        } else if (!validateCardNumber(cardNumberField.getText())) {
+            validationMessage.append("Błędny numer karty bibliotecznej. Poprawny format: Axxxxx.\n");
+        }
+
+        if (validateNonDefault(usernameField, "Login")) {
+            validationMessage.append("Pole Login nie może pozostać puste.\n");
+        } else if (!validateUsername(usernameField.getText())) {
+            validationMessage.append("Błędny login. Login nie może zawierać spacji i musi mieć od 4 do 20 znaków.\n");
+        }
+
+        if (validateNonDefault(passwordField, "Hasło")) {
+            validationMessage.append("Pole Hasło nie może pozostać puste.\n");
+        } else if (!validatePassword(new String(passwordField.getPassword()))) {
+            validationMessage.append("Błędne hasło. Hasło musi zawierać minimum 8 znaków, przynajmniej jedną cyfrę, jedną małą literę, jedną dużą literę, jeden znak specjalny.\n");
+        }
+
+        return validationMessage.toString();
+    }
+
+    private boolean validateNonDefault(JTextField field, String defaultValue) {
+        return field.getText().equals(defaultValue);
+    }
+
+    private boolean validateName(String name) {
+        return name.matches("[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+");
+    }
+
+    private boolean validateAddress(String address) {
+        return address.matches("^(ul\\.|al\\.|pl\\.|os\\.) [A-ZĄĆĘŁŃÓŚŹŻa-ząćęłńóśźż]+( \\d+[a-z]*)*, [A-ZĄĆĘŁŃÓŚŹŻa-ząćęłńóśźż]+");
+    }
+
+    private boolean validatePhone(String phone) {
+        return phone.matches("\\+48 \\d{3} \\d{3} \\d{3}");
+    }
+
+    private boolean validateEmail(String email) {
+        return email.matches(".*@.*\\..*");
+    }
+
+    private boolean validateCardNumber(String cardNumber) {
+        return cardNumber.matches("[A-Z]\\d{5}");
+    }
+
+    private boolean validateUsername(String username) {
+        return !username.contains(" ") && username.length() >= 4 && username.length() <= 20;
+    }
+
+    private boolean validatePassword(String password) {
+        return password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$");
     }
 
     @Override
