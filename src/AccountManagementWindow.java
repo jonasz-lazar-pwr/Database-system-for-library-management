@@ -83,48 +83,91 @@ public class AccountManagementWindow extends JFrame implements FocusListener {
     }
 
     private void handleConfirmButton() {
+
+        String validationMessage = validateFields();
+        if (validationMessage.isEmpty()) {
+            String newUsername = usernameField.getText();
+            String newPassword = new String(passwordField.getPassword());
+
+            boolean isDefaultUsername = newUsername.equals("Nowy login");
+            boolean isDefaultPassword = newPassword.equals("Nowe hasło");
+
+            if (isDefaultUsername && isDefaultPassword) {
+                JOptionPane.showMessageDialog(this, "Wprowadź poprawne dane.", "Błąd", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            if (!isDefaultUsername && doesUserExist(newUsername)) {
+                JOptionPane.showMessageDialog(this, "Użytkownik o takiej nazwie już istnieje!", "Błąd", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            String password = getPasswordForConfirmation();
+
+            if (password != null && checkUserPassword(username, password)) {
+                if (!isDefaultUsername) {
+                    updateUsername(username, newUsername);
+                    setUsername(newUsername);
+                }
+
+                // Sprawdzamy, czy hasło zostało zmienione
+                if (!isDefaultPassword) {
+                    // Tutaj dokonujemy aktualizacji hasła i sprawdzamy, czy operacja się powiodła
+                    boolean passwordUpdated = updatePassword(this.username, newPassword);
+
+                    // Jeśli hasło zostało zmienione poprawnie
+                    if (passwordUpdated) {
+                        JOptionPane.showMessageDialog(this, "Zmieniono hasło.", "Informacja", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Nie udało się zmienić hasła.", "Błąd", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+
+                navigateToNextWindow();
+
+            } else {
+                JOptionPane.showMessageDialog(this, "Wprowadzono niepoprawne hasło.", "Błąd", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            // Wyświetl komunikat o błędzie walidacji pól
+            JOptionPane.showMessageDialog(this, validationMessage, "Błąd walidacji", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private String validateFields() {
+        StringBuilder validationMessage = new StringBuilder();
+
         String newUsername = usernameField.getText();
         String newPassword = new String(passwordField.getPassword());
 
-        boolean isDefaultUsername = newUsername.equals("Nowy login");
-        boolean isDefaultPassword = newPassword.equals("Nowe hasło");
-
-        if (isDefaultUsername && isDefaultPassword) {
-            JOptionPane.showMessageDialog(this, "Wprowadź poprawne dane.", "Błąd", JOptionPane.ERROR_MESSAGE);
-            return;
+        if (!validateNonDefault(usernameField, "Nowy login") && (newUsername.length() < 4 || newUsername.length() > 20 || containsSpaces(newUsername))) {
+            validationMessage.append("Błędny login. Login nie może zawierać spacji na końcu i początku oraz musi mieć od 4 do 20 znaków.\n");
         }
 
-        if (!isDefaultUsername && doesUserExist(newUsername)) {
-            JOptionPane.showMessageDialog(this, "Użytkownik o takiej nazwie już istnieje!", "Błąd", JOptionPane.ERROR_MESSAGE);
-            return;
+        if (!validateNonDefault(passwordField, "Nowe hasło") && (!validatePassword(newPassword) || containsSpaces(newPassword))) {
+            validationMessage.append("Błędne hasło. Hasło musi zawierać minimum 8 znaków, przynajmniej jedną cyfrę, jedną małą literę, jedną dużą literę, jeden znak specjalny oraz brak spacji.\n");
         }
 
-        String password = getPasswordForConfirmation();
+        return validationMessage.toString();
+    }
 
-        if (password != null && checkUserPassword(username, password)) {
-            if (!isDefaultUsername) {
-                updateUsername(username, newUsername);
-                setUsername(newUsername);
-            }
+    private boolean validateNonDefault(JTextField field, String defaultValue) {
+        return field.getText().trim().equals(defaultValue);
+    }
 
-            // Sprawdzamy, czy hasło zostało zmienione
-            if (!isDefaultPassword) {
-                // Tutaj dokonujemy aktualizacji hasła i sprawdzamy, czy operacja się powiodła
-                boolean passwordUpdated = updatePassword(this.username, newPassword);
+    private boolean containsSpaces(String text) {
+        return text.trim().length() != text.length();
+    }
 
-                // Jeśli hasło zostało zmienione poprawnie
-                if (passwordUpdated) {
-                    JOptionPane.showMessageDialog(this, "Zmieniono hasło.", "Informacja", JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    JOptionPane.showMessageDialog(this, "Nie udało się zmienić hasła.", "Błąd", JOptionPane.ERROR_MESSAGE);
-                }
-            }
+    private boolean validateUsername(String username) {
+        // Dodaj swoją walidację dla loginu, np. sprawdzanie długości
+        return username.length() >= 4 && username.length() <= 20;
+    }
 
-            navigateToNextWindow();
-
-        } else {
-            JOptionPane.showMessageDialog(this, "Wprowadzono niepoprawne hasło.", "Błąd", JOptionPane.ERROR_MESSAGE);
-        }
+    private boolean validatePassword(String password) {
+        // Dodaj swoją walidację dla hasła, używając podanego wzoru
+        String regex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$";
+        return password.matches(regex);
     }
 
     private void handleCancelButton() {
@@ -138,8 +181,24 @@ public class AccountManagementWindow extends JFrame implements FocusListener {
     }
 
     private String getPasswordForConfirmation() {
-        return JOptionPane.showInputDialog(this, "Podaj hasło do potwierdzenia zmian");
+        JPasswordField passwordField = new JPasswordField();
+        int option = JOptionPane.showOptionDialog(
+                this,
+                passwordField,
+                "Podaj hasło do potwierdzenia zmian",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                null,
+                null);
+
+        if (option == JOptionPane.OK_OPTION) {
+            return new String(passwordField.getPassword());
+        } else {
+            return null;
+        }
     }
+
 
     private void navigateToNextWindow() {
         if (Objects.equals(getUserRole(username), "czytelnik")) {
@@ -228,7 +287,7 @@ public class AccountManagementWindow extends JFrame implements FocusListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null; // Zwracanie null w przypadku błędu lub braku informacji
+        return null;
     }
 
     private void updateUsername(String username, String newUsername) {

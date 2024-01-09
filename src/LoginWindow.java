@@ -1,7 +1,10 @@
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.sql.*;
@@ -66,8 +69,8 @@ public class LoginWindow extends JFrame implements FocusListener {
 
         // Panel z przyciskami
         buttonPanel = new JPanel();
-        buttonPanel.setBounds(145, 225, 200, 125);
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 5));
+        buttonPanel.setBounds(140, 225, 210, 100);
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 10));
         buttonPanel.setBackground(Color.GRAY);
         buttonPanel.setOpaque(false);
 
@@ -75,15 +78,24 @@ public class LoginWindow extends JFrame implements FocusListener {
         MyButton loginButton = getMyButton();
         buttonPanel.add(loginButton);
 
-        // Przycisk odpowiedzialny za rejestrowanie nowego użytkownika
-        MyButton registerButton = new MyButton("Zarejestruj się");
+        JLabel registerLabel = new JLabel("Nie masz konta? Utwórz je ");
+        registerLabel.setFont(new Font("Roboto",Font.PLAIN, 13));
+        registerLabel.setForeground(Color.LIGHT_GRAY);
 
-        registerButton.addActionListener(e -> {
-            SwingUtilities.invokeLater(() -> new RegisterWindow(jdbcUrl, dbUsername, dbPassword));
-            dispose();
+        JLabel hereLabel = new JLabel("TUTAJ");
+        hereLabel.setFont(new Font("Roboto",Font.BOLD, 14));
+        hereLabel.setForeground(new Color(55, 88, 159));
+        hereLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        hereLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                SwingUtilities.invokeLater(() -> new RegisterWindow(jdbcUrl, dbUsername, dbPassword));
+                dispose();
+            }
         });
+        buttonPanel.add(registerLabel);
+        buttonPanel.add(hereLabel);
 
-        buttonPanel.add(registerButton);
     }
 
     private MyButton getMyButton() {
@@ -140,7 +152,6 @@ public class LoginWindow extends JFrame implements FocusListener {
                 // Wykonaj zapytanie
                 ResultSet resultSet = preparedStatement.executeQuery();
 
-                // Jeżeli resultSet.next() zwróci true, oznacza to, że istnieje rekord z podanym loginem
                 boolean userExists = resultSet.next();
 
                 resultSet.close();
@@ -152,9 +163,6 @@ public class LoginWindow extends JFrame implements FocusListener {
         return false;
     }
 
-    // return 0 - błędne hasło
-    // return 1 - czytelnik
-    // return 2 - bibliotekarz
     private int checkUserPassword(String username, String password) {
         try {
             Connection connection = DriverManager.getConnection(jdbcUrl, dbUsername, dbPassword);
@@ -175,7 +183,6 @@ public class LoginWindow extends JFrame implements FocusListener {
 
                     resultSet.close();
 
-                    // Tutaj się dzieje jakaś magia szyfrująca od ziomeczka ze stackoverflow
                     MessageDigest m = MessageDigest.getInstance("MD5");
                     m.reset();
                     m.update(password.getBytes());

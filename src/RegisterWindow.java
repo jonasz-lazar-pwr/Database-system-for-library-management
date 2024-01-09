@@ -22,7 +22,6 @@ public class RegisterWindow extends JFrame implements FocusListener, ActionListe
     private MyTextField usernameField;
 
     private MyPasswordField passwordField;
-
     private MyButton registerButton;
 
     private JPanel textFieldPanel;
@@ -171,63 +170,66 @@ public class RegisterWindow extends JFrame implements FocusListener, ActionListe
         }
     }
 
-
     private String validateFields() {
         StringBuilder validationMessage = new StringBuilder();
 
         if (validateNonDefault(firstNameField, "Imię")) {
             validationMessage.append("Pole Imię nie może pozostać puste.\n");
-        } else if (!validateName(firstNameField.getText())) {
-            validationMessage.append("Błędne imię. Imię powinno zaczynać się z dużej litery i składać z liter.\n");
+        } else if (!validateName(firstNameField.getText()) || containsSpaces(firstNameField.getText())) {
+            validationMessage.append("Błędne imię. Imię powinno zaczynać się z dużej litery i składać z liter. Nie może zawierać spacji na początku lub na końcu.\n");
         }
 
         if (validateNonDefault(lastNameField, "Nazwisko")) {
             validationMessage.append("Pole Nazwisko nie może pozostać puste.\n");
-        } else if (!validateName(lastNameField.getText())) {
-            validationMessage.append("Błędne nazwisko. Nazwisko powinno zaczynać się z dużej litery i składać z liter.\n");
+        } else if (!validateName(lastNameField.getText()) || containsSpaces(lastNameField.getText())) {
+            validationMessage.append("Błędne nazwisko. Nazwisko powinno zaczynać się z dużej litery i składać z liter. Nie może zawierać spacji na początku lub na końcu.\n");
         }
 
         if (validateNonDefault(addressField, "Adres zamieszkania")) {
             validationMessage.append("Pole Adres zamieszkania nie może pozostać puste.\n");
-        } else if (!validateAddress(addressField.getText())) {
-            validationMessage.append("Błędny adres zamieszkania. Poprawny format: ul./al./pl./os. nazwa numer, miasto.\n");
+        } else if (!validateAddress(addressField.getText()) || containsSpaces(addressField.getText())) {
+            validationMessage.append("Błędny adres zamieszkania. Poprawny format: ul./al./pl./os. nazwa numer, miasto. Nie może zawierać spacji na początku lub na końcu.\n");
         }
 
         if (validateNonDefault(phoneField, "Numer telefonu")) {
             validationMessage.append("Pole Numer telefonu nie może pozostać puste.\n");
-        } else if (!validatePhone(phoneField.getText())) {
-            validationMessage.append("Błędny numer telefonu. Poprawny format: +48 xxx xxx xxx.\n");
+        } else if (!validatePhone(phoneField.getText()) || containsSpaces(phoneField.getText())) {
+            validationMessage.append("Błędny numer telefonu. Poprawny format: +48 xxx xxx xxx. Nie może zawierać spacji na początku lub na końcu.\n");
         }
 
         if (validateNonDefault(mailField, "Adres e-mail")) {
             validationMessage.append("Pole Adres e-mail nie może pozostać puste.\n");
-        } else if (!validateEmail(mailField.getText())) {
-            validationMessage.append("Błędny adres email. Poprawny format: user@example.com.\n");
+        } else if (!validateEmail(mailField.getText()) || containsSpaces(mailField.getText())) {
+            validationMessage.append("Błędny adres email. Poprawny format: user@example.com. Nie może zawierać spacji na początku lub na końcu.\n");
         }
 
         if (validateNonDefault(cardNumberField, "Numer karty bibliotecznej")) {
             validationMessage.append("Pole Numer karty bibliotecznej nie może pozostać puste.\n");
-        } else if (!validateCardNumber(cardNumberField.getText())) {
-            validationMessage.append("Błędny numer karty bibliotecznej. Poprawny format: Axxxxx.\n");
+        } else if (!validateCardNumber(cardNumberField.getText()) || containsSpaces(cardNumberField.getText())) {
+            validationMessage.append("Błędny numer karty bibliotecznej. Poprawny format: Axxxxx. Nie może zawierać spacji na początku lub na końcu.\n");
         }
 
         if (validateNonDefault(usernameField, "Login")) {
             validationMessage.append("Pole Login nie może pozostać puste.\n");
-        } else if (!validateUsername(usernameField.getText())) {
-            validationMessage.append("Błędny login. Login nie może zawierać spacji i musi mieć od 4 do 20 znaków.\n");
+        } else if (!validateUsername(usernameField.getText()) || containsSpaces(usernameField.getText())) {
+            validationMessage.append("Błędny login. Login nie może zawierać spacji i musi mieć od 4 do 20 znaków. Nie może zawierać spacji na początku lub na końcu.\n");
         }
 
         if (validateNonDefault(passwordField, "Hasło")) {
             validationMessage.append("Pole Hasło nie może pozostać puste.\n");
-        } else if (!validatePassword(new String(passwordField.getPassword()))) {
-            validationMessage.append("Błędne hasło. Hasło musi zawierać minimum 8 znaków, przynajmniej jedną cyfrę, jedną małą literę, jedną dużą literę, jeden znak specjalny.\n");
+        } else if (!validatePassword(new String(passwordField.getPassword())) || containsSpaces(new String(passwordField.getPassword()))) {
+            validationMessage.append("Błędne hasło. Hasło musi zawierać minimum 8 znaków, przynajmniej jedną cyfrę, jedną małą literę, jedną dużą literę, jeden znak specjalny oraz brak spacji.\n");
         }
 
         return validationMessage.toString();
     }
 
+    private boolean containsSpaces(String text) {
+        return text.trim().length() != text.length();
+    }
+
     private boolean validateNonDefault(JTextField field, String defaultValue) {
-        return field.getText().equals(defaultValue);
+        return field.getText().trim().equals(defaultValue);
     }
 
     private boolean validateName(String name) {
