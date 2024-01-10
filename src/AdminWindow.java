@@ -39,7 +39,7 @@ public class AdminWindow extends JFrame {
 
         // Panel z przyciskami
         buttonsPanel = new JPanel();
-        buttonsPanel.setBounds(145, 60, 200, 335);
+        buttonsPanel.setBounds(145, 35, 200, 400);
         buttonsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 10));
         buttonsPanel.setBackground(Color.GRAY);
         buttonsPanel.setOpaque(false);
@@ -48,6 +48,13 @@ public class AdminWindow extends JFrame {
 
         rentalsManagementButton.addActionListener(e -> {
             SwingUtilities.invokeLater(() -> new RentalsManagementWindow(jdbcUrl, dbUsername, dbPassword, username));
+            dispose();
+        });
+
+        MyButton reservationsButton = new MyButton("Rezerwacje");
+
+        reservationsButton.addActionListener(e -> {
+            SwingUtilities.invokeLater(() -> new ReservationsViewWindow(jdbcUrl, dbUsername, dbPassword, username));
             dispose();
         });
 
@@ -80,6 +87,7 @@ public class AdminWindow extends JFrame {
         });
 
         buttonsPanel.add(rentalsManagementButton);
+        buttonsPanel.add(reservationsButton);
         buttonsPanel.add(viewBooksButton);
         buttonsPanel.add(accountManagementButton);
         buttonsPanel.add(reportButton);

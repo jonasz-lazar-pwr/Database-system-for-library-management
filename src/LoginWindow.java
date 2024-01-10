@@ -69,7 +69,7 @@ public class LoginWindow extends JFrame implements FocusListener {
 
         // Panel z przyciskami
         buttonPanel = new JPanel();
-        buttonPanel.setBounds(140, 225, 210, 100);
+        buttonPanel.setBounds(120, 225, 250, 100);
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 10));
         buttonPanel.setBackground(Color.GRAY);
         buttonPanel.setOpaque(false);
